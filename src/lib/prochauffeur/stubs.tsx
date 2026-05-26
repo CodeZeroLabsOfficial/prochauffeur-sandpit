@@ -223,7 +223,7 @@ export const stubs = {
     phase: "Phase 3",
     priority: "P1",
     iosEquivalent: "AdminCompanyView",
-    firestore: "app_settings (future company profile doc)",
+    firestore: "operator/company",
     tailAdminBase: "User profile header + preference list",
   },
   companyDetails: {
@@ -234,7 +234,7 @@ export const stubs = {
     phase: "Phase 3",
     priority: "P1",
     iosEquivalent: "AdminCompanyDetailsEditView",
-    firestore: "app_settings/company (planned)",
+    firestore: "operator/company",
     tailAdminBase: "Profile page + modals",
   },
   companyHours: {
@@ -334,7 +334,7 @@ export const stubs = {
     phase: "Phase 4",
     priority: "P3",
     iosEquivalent: "AdminCompanyView (about placeholder)",
-    firestore: "app_settings/company (planned)",
+    firestore: "operator/company",
     tailAdminBase: "Form elements",
   },
   reports: {

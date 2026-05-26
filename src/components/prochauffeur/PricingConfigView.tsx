@@ -111,7 +111,7 @@ export default function PricingConfigView() {
           {!hasPricingDocument ? (
             <div className="mb-4 rounded-xl border border-warning-500/30 bg-warning-500/10 px-4 py-3 text-sm text-warning-600 dark:text-warning-400">
               No pricing document in Firestore yet. The form shows built-in
-              defaults — save to create app_settings/pricing.
+              defaults — save to create app_settings/pricing (app config).
             </div>
           ) : null}
 

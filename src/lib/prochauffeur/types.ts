@@ -1,3 +1,9 @@
+import type {
+  LocaleDateFormat,
+  LocaleNumberFormat,
+  LocaleTimeFormat,
+} from "@/lib/prochauffeur/localeOptions";
+
 export type UserRole = "customer" | "driver" | "admin";
 
 export type TripStatus =
@@ -137,6 +143,15 @@ export type AppFleetOperatingHours = {
   schedules: FleetWeeklyOperatingSchedule[];
 };
 
+export type AppFleetLocaleSettings = {
+  language: string | null;
+  country: string | null;
+  dateFormat: LocaleDateFormat | null;
+  timeFormat: LocaleTimeFormat | null;
+  timeZoneIdentifier: string | null;
+  numberFormat: LocaleNumberFormat | null;
+};
+
 export type CompanyProfile = {
   displayName: string;
   address: string;
@@ -247,6 +262,15 @@ export const DEFAULT_GLOBAL_LIMITS: AppGlobalLimits = {
 export const EMPTY_OPERATING_HOURS: AppFleetOperatingHours = {
   timeZoneIdentifier: null,
   schedules: [],
+};
+
+export const EMPTY_FLEET_LOCALE: AppFleetLocaleSettings = {
+  language: null,
+  country: null,
+  dateFormat: null,
+  timeFormat: null,
+  timeZoneIdentifier: null,
+  numberFormat: null,
 };
 
 export const EMPTY_COMPANY_PROFILE: CompanyProfile = {

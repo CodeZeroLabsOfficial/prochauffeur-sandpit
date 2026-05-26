@@ -17,9 +17,11 @@ import {
   listenFleetLocations,
   listenFleetVehicles,
   listenGlobalLimits,
+  listenFleetLocale,
   listenOperatingHours,
   listenPricingConfig,
   saveCompanyProfile,
+  saveFleetLocale,
   saveFleetOperatingHours,
   savePricingConfig,
   unassignFleetVehicleFromChauffeur,
@@ -29,6 +31,7 @@ import {
   upsertVehicle,
 } from "@/lib/prochauffeur/firestore";
 import type {
+  AppFleetLocaleSettings,
   AppFleetOperatingHours,
   AppGlobalLimits,
   CompanyProfile,
@@ -38,13 +41,17 @@ import type {
   UserProfile,
   Vehicle,
 } from "@/lib/prochauffeur/types";
-import { DEFAULT_PRICING_CONFIG } from "@/lib/prochauffeur/types";
+import {
+  DEFAULT_PRICING_CONFIG,
+  EMPTY_FLEET_LOCALE,
+} from "@/lib/prochauffeur/types";
 
 type AdminOperationsContextValue = {
   vehicles: Vehicle[];
   locations: FleetLocation[];
   limits: AppGlobalLimits;
   operatingHours: AppFleetOperatingHours;
+  fleetLocale: AppFleetLocaleSettings;
   companyProfile: CompanyProfile;
   pricingConfig: PricingConfig;
   hasPricingDocument: boolean;
@@ -67,6 +74,7 @@ type AdminOperationsContextValue = {
   saveLocation: (location: FleetLocation) => Promise<boolean>;
   removeLocation: (id: string) => Promise<boolean>;
   saveOperatingHours: (hours: AppFleetOperatingHours) => Promise<boolean>;
+  saveFleetLocale: (locale: AppFleetLocaleSettings) => Promise<boolean>;
   saveCompany: (profile: CompanyProfile) => Promise<boolean>;
   savePricing: (config: PricingConfig) => Promise<boolean>;
   saveDriverProfiles: (
@@ -91,6 +99,9 @@ export function AdminOperationsProvider({
   const [limits, setLimits] = useState<AppGlobalLimits | null>(null);
   const [operatingHours, setOperatingHours] =
     useState<AppFleetOperatingHours | null>(null);
+  const [fleetLocale, setFleetLocale] = useState<AppFleetLocaleSettings | null>(
+    null
+  );
   const [companyProfile, setCompanyProfile] = useState<CompanyProfile | null>(
     null
   );
@@ -107,7 +118,7 @@ export function AdminOperationsProvider({
     let readyCount = 0;
     const markReady = () => {
       readyCount += 1;
-      if (readyCount >= 6) {
+      if (readyCount >= 7) {
         setHasReceivedOperationsSnapshot(true);
       }
     };
@@ -128,6 +139,10 @@ export function AdminOperationsProvider({
       setOperatingHours(rows);
       markReady();
     });
+    const unsubLocale = listenFleetLocale((rows) => {
+      setFleetLocale(rows);
+      markReady();
+    });
     const unsubCompany = listenCompanyProfile((rows) => {
       setCompanyProfile(rows);
       markReady();
@@ -143,6 +158,7 @@ export function AdminOperationsProvider({
       unsubLocations();
       unsubLimits();
       unsubHours();
+      unsubLocale();
       unsubCompany();
       unsubPricing();
     };
@@ -193,6 +209,7 @@ export function AdminOperationsProvider({
         timeZoneIdentifier: null,
         schedules: [],
       },
+      fleetLocale: fleetLocale ?? EMPTY_FLEET_LOCALE,
       companyProfile: companyProfile ?? {
         displayName: "",
         address: "",
@@ -238,6 +255,16 @@ export function AdminOperationsProvider({
       removeLocation: (id) => runMutation(() => deleteFleetLocation(id)),
       saveOperatingHours: (hours) =>
         runMutation(() => saveFleetOperatingHours(hours)),
+      saveFleetLocale: (locale) =>
+        runMutation(() =>
+          saveFleetLocale(
+            locale,
+            operatingHours ?? {
+              timeZoneIdentifier: null,
+              schedules: [],
+            }
+          )
+        ),
       saveCompany: (profile) => runMutation(() => saveCompanyProfile(profile)),
       savePricing: (config) => runMutation(() => savePricingConfig(config)),
       saveDriverProfiles: (uid, profile, driverProfile) =>
@@ -254,6 +281,7 @@ export function AdminOperationsProvider({
       hasPricingDocument,
       hasReceivedOperationsSnapshot,
       isSaving,
+      fleetLocale,
       limits,
       locations,
       operatingHours,

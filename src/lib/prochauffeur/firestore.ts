@@ -20,6 +20,7 @@ import { getFirebaseApp, getFirestoreDb } from "@/lib/firebase/client";
 import {
   parseCompanyProfile,
   parseFleetLocation,
+  parseFleetLocaleSettings,
   parseFleetOperatingHours,
   parseGlobalLimits,
   parseTrip,
@@ -32,6 +33,7 @@ import {
   parsePricingConfig,
 } from "@/lib/prochauffeur/pricingHelpers";
 import type {
+  AppFleetLocaleSettings,
   AppFleetOperatingHours,
   AppGlobalLimits,
   AppUser,
@@ -47,14 +49,29 @@ import type {
 import {
   DEFAULT_GLOBAL_LIMITS,
   EMPTY_COMPANY_PROFILE,
+  EMPTY_FLEET_LOCALE,
   EMPTY_OPERATING_HOURS,
 } from "@/lib/prochauffeur/types";
+
+import {
+  APP_SETTINGS_COLLECTION,
+  OPERATOR_COLLECTION,
+  OPERATOR_COMPANY_DOC,
+  OPERATOR_LOCALE_DOC,
+} from "@/lib/prochauffeur/firestorePaths";
 
 const TRIPS = "trips";
 const USERS = "users";
 const VEHICLES = "vehicles";
 const LOCATIONS = "locations";
-const APP_SETTINGS = "app_settings";
+
+function appSettingsDoc(id: string) {
+  return doc(getFirestoreDb(), APP_SETTINGS_COLLECTION, id);
+}
+
+function operatorDoc(id: string) {
+  return doc(getFirestoreDb(), OPERATOR_COLLECTION, id);
+}
 
 function encodeUserProfile(profile: UserProfile): Record<string, unknown> {
   const payload: Record<string, unknown> = {
@@ -160,6 +177,19 @@ function encodeOperatingHours(
   };
 }
 
+function encodeFleetLocale(
+  locale: AppFleetLocaleSettings
+): Record<string, unknown> {
+  return {
+    language: locale.language,
+    country: locale.country,
+    dateFormat: locale.dateFormat,
+    timeFormat: locale.timeFormat,
+    timeZoneIdentifier: locale.timeZoneIdentifier,
+    numberFormat: locale.numberFormat,
+  };
+}
+
 function encodeCompanyProfile(profile: CompanyProfile): Record<string, unknown> {
   return {
     displayName: profile.displayName,
@@ -249,7 +279,7 @@ export function listenGlobalLimits(
   onUpdate: (limits: AppGlobalLimits) => void
 ): () => void {
   return onSnapshot(
-    doc(getFirestoreDb(), APP_SETTINGS, "limits"),
+    appSettingsDoc("limits"),
     (snapshot) => {
       if (!snapshot.exists()) {
         onUpdate(DEFAULT_GLOBAL_LIMITS);
@@ -264,7 +294,7 @@ export function listenOperatingHours(
   onUpdate: (hours: AppFleetOperatingHours) => void
 ): () => void {
   return onSnapshot(
-    doc(getFirestoreDb(), APP_SETTINGS, "operating_hours"),
+    appSettingsDoc("operating_hours"),
     (snapshot) => {
       if (!snapshot.exists()) {
         onUpdate(EMPTY_OPERATING_HOURS);
@@ -275,26 +305,35 @@ export function listenOperatingHours(
   );
 }
 
+export function listenFleetLocale(
+  onUpdate: (locale: AppFleetLocaleSettings) => void
+): () => void {
+  return onSnapshot(operatorDoc(OPERATOR_LOCALE_DOC), (snapshot) => {
+    if (!snapshot.exists()) {
+      onUpdate(EMPTY_FLEET_LOCALE);
+      return;
+    }
+    onUpdate(parseFleetLocaleSettings(snapshot.data()));
+  });
+}
+
 export function listenCompanyProfile(
   onUpdate: (profile: CompanyProfile) => void
 ): () => void {
-  return onSnapshot(
-    doc(getFirestoreDb(), APP_SETTINGS, "company"),
-    (snapshot) => {
-      if (!snapshot.exists()) {
-        onUpdate(EMPTY_COMPANY_PROFILE);
-        return;
-      }
-      onUpdate(parseCompanyProfile(snapshot.data()));
+  return onSnapshot(operatorDoc(OPERATOR_COMPANY_DOC), (snapshot) => {
+    if (!snapshot.exists()) {
+      onUpdate(EMPTY_COMPANY_PROFILE);
+      return;
     }
-  );
+    onUpdate(parseCompanyProfile(snapshot.data()));
+  });
 }
 
 export function listenPricingConfig(
   onUpdate: (config: PricingConfig | null, exists: boolean) => void
 ): () => void {
   return onSnapshot(
-    doc(getFirestoreDb(), APP_SETTINGS, "pricing"),
+    appSettingsDoc("pricing"),
     (snapshot) => {
       if (!snapshot.exists()) {
         onUpdate(null, false);
@@ -415,7 +454,7 @@ export async function unassignFleetVehicleFromChauffeur(
 }
 
 export async function fetchGlobalLimits(): Promise<AppGlobalLimits> {
-  const snap = await getDoc(doc(getFirestoreDb(), APP_SETTINGS, "limits"));
+  const snap = await getDoc(appSettingsDoc("limits"));
   if (!snap.exists()) return DEFAULT_GLOBAL_LIMITS;
   return parseGlobalLimits(snap.data());
 }
@@ -481,28 +520,39 @@ export async function deleteFleetLocation(id: string): Promise<void> {
 export async function saveFleetOperatingHours(
   hours: AppFleetOperatingHours
 ): Promise<void> {
-  await setDoc(
-    doc(getFirestoreDb(), APP_SETTINGS, "operating_hours"),
-    encodeOperatingHours(hours)
-  );
+  await setDoc(appSettingsDoc("operating_hours"), encodeOperatingHours(hours));
+}
+
+export async function saveFleetLocale(
+  locale: AppFleetLocaleSettings,
+  operatingHours: AppFleetOperatingHours
+): Promise<void> {
+  await setDoc(operatorDoc(OPERATOR_LOCALE_DOC), encodeFleetLocale(locale));
+
+  if (locale.timeZoneIdentifier !== operatingHours.timeZoneIdentifier) {
+    await setDoc(
+      appSettingsDoc("operating_hours"),
+      encodeOperatingHours({
+        ...operatingHours,
+        timeZoneIdentifier: locale.timeZoneIdentifier,
+      })
+    );
+  }
 }
 
 export async function saveCompanyProfile(profile: CompanyProfile): Promise<void> {
   await setDoc(
-    doc(getFirestoreDb(), APP_SETTINGS, "company"),
+    operatorDoc(OPERATOR_COMPANY_DOC),
     encodeCompanyProfile(profile)
   );
 }
 
 export async function savePricingConfig(config: PricingConfig): Promise<void> {
-  await setDoc(
-    doc(getFirestoreDb(), APP_SETTINGS, "pricing"),
-    encodePricingConfig(config)
-  );
+  await setDoc(appSettingsDoc("pricing"), encodePricingConfig(config));
 }
 
 export async function fetchPricingConfig(): Promise<PricingConfig | null> {
-  const snap = await getDoc(doc(getFirestoreDb(), APP_SETTINGS, "pricing"));
+  const snap = await getDoc(appSettingsDoc("pricing"));
   if (!snap.exists()) return null;
   return parsePricingConfig(snap.data());
 }

@@ -1,5 +1,6 @@
 import type { DocumentData, Timestamp } from "firebase/firestore";
 import type {
+  AppFleetLocaleSettings,
   AppFleetOperatingHours,
   AppGlobalLimits,
   AppUser,
@@ -20,6 +21,11 @@ import type {
   VehicleSpecificationChip,
   VehicleType,
 } from "./types";
+import {
+  parseLocaleDateFormat,
+  parseLocaleNumberFormat,
+  parseLocaleTimeFormat,
+} from "@/lib/prochauffeur/localeOptions";
 import {
   UNLIMITED_CAP,
   defaultDriverProfile,
@@ -327,6 +333,28 @@ export function parseGlobalLimits(data: DocumentData): AppGlobalLimits {
     maxDrivers: intOrUnlimited("maxDrivers"),
     maxLocations: intOrUnlimited("maxLocations"),
     subscriptionTier,
+  };
+}
+
+export function parseFleetLocaleSettings(
+  data: DocumentData
+): AppFleetLocaleSettings {
+  const language =
+    typeof data.language === "string" ? data.language.trim() || null : null;
+  const country =
+    typeof data.country === "string" ? data.country.trim() || null : null;
+  const timeZoneIdentifier =
+    data.timeZoneIdentifier != null
+      ? String(data.timeZoneIdentifier).trim() || null
+      : null;
+
+  return {
+    language,
+    country,
+    dateFormat: parseLocaleDateFormat(data.dateFormat),
+    timeFormat: parseLocaleTimeFormat(data.timeFormat),
+    timeZoneIdentifier,
+    numberFormat: parseLocaleNumberFormat(data.numberFormat),
   };
 }
 

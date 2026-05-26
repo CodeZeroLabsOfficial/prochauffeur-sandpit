@@ -42,13 +42,11 @@ export default function OperatingHoursView() {
     clearActionError,
   } = useAdminOperations();
 
-  const [timeZoneIdentifier, setTimeZoneIdentifier] = useState("");
   const [schedules, setSchedules] = useState<FleetWeeklyOperatingSchedule[]>(
     []
   );
 
   useEffect(() => {
-    setTimeZoneIdentifier(operatingHours.timeZoneIdentifier ?? "");
     setSchedules(operatingHours.schedules);
   }, [operatingHours]);
 
@@ -77,14 +75,13 @@ export default function OperatingHoursView() {
   }
 
   function handleCancel() {
-    setTimeZoneIdentifier(operatingHours.timeZoneIdentifier ?? "");
     setSchedules(operatingHours.schedules);
     clearActionError();
   }
 
   async function handleSave() {
     await saveOperatingHours({
-      timeZoneIdentifier: timeZoneIdentifier.trim() || null,
+      timeZoneIdentifier: operatingHours.timeZoneIdentifier,
       schedules,
     });
   }
@@ -93,7 +90,7 @@ export default function OperatingHoursView() {
     <CompanySettingsSection
       id="operating-hours"
       title="Operating hours"
-      description="Define when your fleet dispatches trips and which time zone applies."
+      description="Define when your fleet dispatches trips. Fleet time zone is configured under Settings → Locale."
       actions={
         <Button
           size="sm"
@@ -113,18 +110,6 @@ export default function OperatingHoursView() {
       }
       className="max-w-3xl space-y-6"
     >
-      <div className="rounded-2xl border border-gray-200 p-5 dark:border-gray-800 lg:p-6">
-        <Label>Fleet time zone (IANA)</Label>
-        <Input
-          value={timeZoneIdentifier}
-          onChange={(e) => setTimeZoneIdentifier(e.target.value)}
-          placeholder="Australia/Sydney"
-        />
-        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-          Used for dispatch scheduling and weekly patterns.
-        </p>
-      </div>
-
       <div>
         <h4 className="mb-4 text-base font-semibold text-gray-800 dark:text-white/90">
           Weekly patterns

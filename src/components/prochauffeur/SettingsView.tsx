@@ -3,6 +3,7 @@
 import CompanyPlaceholderView from "@/components/prochauffeur/CompanyPlaceholderView";
 import AdminRosterView from "@/components/prochauffeur/AdminRosterView";
 import LicenseManagementView from "@/components/prochauffeur/LicenseManagementView";
+import LocaleSettingsView from "@/components/prochauffeur/LocaleSettingsView";
 import React from "react";
 
 export default function SettingsView() {
@@ -10,6 +11,7 @@ export default function SettingsView() {
     <div className="space-y-6">
       <LicenseManagementView />
       <AdminRosterView />
+      <LocaleSettingsView />
       <CompanyPlaceholderView
         id="integrations"
         title="Integrations"
