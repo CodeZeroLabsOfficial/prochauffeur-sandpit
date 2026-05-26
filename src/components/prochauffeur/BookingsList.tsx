@@ -1,60 +1,287 @@
 "use client";
 
-import BookingCard from "@/components/prochauffeur/BookingCard";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import AdminDataTable, {
+  type AdminTableColumn,
+} from "@/components/prochauffeur/admin-table/AdminDataTable";
+import AdminListPageShell from "@/components/prochauffeur/admin-table/AdminListPageShell";
+import {
+  PrimaryCell,
+  SecondaryCell,
+} from "@/components/prochauffeur/admin-table/AdminTableCells";
+import AdminTableRowMenu, {
+  type AdminTableRowMenuItem,
+} from "@/components/prochauffeur/admin-table/AdminTableRowMenu";
+import TripStatusBadge from "@/components/prochauffeur/TripStatusBadge";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
-import React from "react";
+import { useAdminDataTable } from "@/hooks/useAdminDataTable";
+import { downloadCsv, matchesSearch } from "@/lib/prochauffeur/adminTable";
+import {
+  bookingCardDatePipeTime,
+  customerDisplayName,
+  statusLabel,
+  vehicleSubtitle,
+} from "@/lib/prochauffeur/display";
+import {
+  isUpcomingTripStatus,
+  type Trip,
+  type TripStatus,
+} from "@/lib/prochauffeur/types";
+import React, { useMemo } from "react";
+
+const BOOKING_TABS = [
+  { id: "all", label: "All bookings" },
+  { id: "active", label: "Active" },
+  { id: "requested", label: "Requested" },
+  { id: "completed", label: "Completed" },
+  { id: "cancelled", label: "Cancelled" },
+] as const;
+
+const ACTIVE_STATUSES: TripStatus[] = [
+  "accepted",
+  "en_route_pickup",
+  "in_progress",
+];
+
+function tripTabMatch(trip: Trip, tabId: string): boolean {
+  if (tabId === "all") return true;
+  if (tabId === "active") return ACTIVE_STATUSES.includes(trip.status);
+  if (tabId === "requested") return trip.status === "requested";
+  if (tabId === "completed") return trip.status === "completed";
+  if (tabId === "cancelled") return trip.status === "cancelled";
+  return true;
+}
+
+function shortTripId(id: string): string {
+  return `#${id.slice(0, 8).toUpperCase()}`;
+}
 
 export default function BookingsList() {
   const vm = useAdminDashboard();
 
+  const sortedTrips = useMemo(
+    () =>
+      [...vm.trips].sort(
+        (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+      ),
+    [vm.trips]
+  );
+
+  const table = useAdminDataTable({
+    rows: sortedTrips,
+    rowKey: (t) => t.id,
+    tabs: [...BOOKING_TABS],
+    filterByTab: tripTabMatch,
+    filterBySearch: (trip, query) =>
+      matchesSearch(
+        query,
+        trip.id,
+        customerDisplayName(trip, vm.userById),
+        vm.chauffeurName(trip.driverID),
+        trip.pickupAddressLine,
+        trip.dropoffAddressLine,
+        statusLabel(trip.status),
+        vehicleSubtitle(trip)
+      ),
+    sortValue: (trip, key) => {
+      switch (key) {
+        case "trip":
+          return trip.id;
+        case "customer":
+          return customerDisplayName(trip, vm.userById);
+        case "chauffeur":
+          return vm.chauffeurName(trip.driverID);
+        case "pickup":
+          return (trip.scheduledPickupAt ?? trip.createdAt).getTime();
+        case "status":
+          return trip.status;
+        default:
+          return trip.createdAt.getTime();
+      }
+    },
+    defaultSortKey: "pickup",
+    defaultSortDirection: "desc",
+  });
+
+  const columns = useMemo<AdminTableColumn<Trip>[]>(
+    () => [
+      {
+        key: "trip",
+        header: "Booking",
+        sortable: true,
+        render: (trip) => <SecondaryCell>{shortTripId(trip.id)}</SecondaryCell>,
+      },
+      {
+        key: "customer",
+        header: "Customer",
+        sortable: true,
+        render: (trip) => (
+          <PrimaryCell>
+            {customerDisplayName(trip, vm.userById)}
+          </PrimaryCell>
+        ),
+      },
+      {
+        key: "chauffeur",
+        header: "Chauffeur",
+        sortable: true,
+        render: (trip) => (
+          <PrimaryCell>{vm.chauffeurName(trip.driverID)}</PrimaryCell>
+        ),
+      },
+      {
+        key: "pickup",
+        header: "Pickup",
+        sortable: true,
+        render: (trip) => (
+          <SecondaryCell>
+            {bookingCardDatePipeTime(
+              trip.scheduledPickupAt ?? trip.createdAt
+            )}
+          </SecondaryCell>
+        ),
+      },
+      {
+        key: "route",
+        header: "Route",
+        sortable: false,
+        render: (trip) => {
+          const route = [trip.pickupAddressLine, trip.dropoffAddressLine]
+            .filter(Boolean)
+            .join(" → ");
+          return (
+            <SecondaryCell>
+              {route || vehicleSubtitle(trip)}
+            </SecondaryCell>
+          );
+        },
+      },
+      {
+        key: "status",
+        header: "Status",
+        sortable: true,
+        align: "center",
+        render: (trip) => <TripStatusBadge status={trip.status} />,
+      },
+    ],
+    [vm.userById, vm.chauffeurName]
+  );
+
+  const handleExport = () => {
+    downloadCsv(
+      "bookings.csv",
+      ["Booking", "Customer", "Chauffeur", "Pickup", "Route", "Status"],
+      table.filteredRows.map((trip) => {
+        const route = [trip.pickupAddressLine, trip.dropoffAddressLine]
+          .filter(Boolean)
+          .join(" → ");
+        return [
+          trip.id,
+          customerDisplayName(trip, vm.userById),
+          vm.chauffeurName(trip.driverID),
+          bookingCardDatePipeTime(trip.scheduledPickupAt ?? trip.createdAt),
+          route || vehicleSubtitle(trip),
+          statusLabel(trip.status),
+        ];
+      })
+    );
+  };
+
+  const bookingMenuItems = (trip: Trip): AdminTableRowMenuItem[] => {
+    const items: AdminTableRowMenuItem[] = [
+      {
+        label: "View details",
+        href: `/bookings/${trip.id}`,
+      },
+    ];
+    const mutating = vm.bookingMutationTripID === trip.id;
+
+    if (trip.status === "requested") {
+      items.push(
+        {
+          label: "Confirm",
+          onClick: () => vm.confirmTripBooking(trip.id),
+          disabled: mutating,
+        },
+        {
+          label: "Decline",
+          onClick: () => vm.declineTripBooking(trip.id),
+          disabled: mutating,
+          destructive: true,
+        }
+      );
+    }
+
+    if (isUpcomingTripStatus(trip.status) && trip.status !== "requested") {
+      items.push(
+        {
+          label: "Mark complete",
+          onClick: () => vm.completeTripBooking(trip.id),
+          disabled: mutating,
+        },
+        {
+          label: "Cancel trip",
+          onClick: () => vm.cancelActiveTrip(trip.id),
+          disabled: mutating,
+          destructive: true,
+        }
+      );
+    }
+
+    return items;
+  };
+
   return (
     <div>
-      <PageBreadcrumb pageTitle="Bookings" />
+      <AdminListPageShell
+        title="Bookings"
+        subtitle="Your most recent trip requests and active bookings."
+        tabs={[...BOOKING_TABS]}
+        activeTabId={table.activeTabId}
+        tabCounts={table.tabCounts}
+        onTabChange={table.setTab}
+        searchQuery={table.searchQuery}
+        onSearchChange={table.setSearch}
+        searchPlaceholder="Search bookings, customers, routes…"
+        onFilter={table.resetFilters}
+        onExport={handleExport}
+      >
+        {vm.bookingActionError ? (
+          <div className="mb-4 rounded-xl border border-error-500/30 bg-error-500/10 px-4 py-3 text-sm text-error-500">
+            {vm.bookingActionError}
+            <button
+              type="button"
+              className="ml-3 underline"
+              onClick={vm.clearBookingActionError}
+            >
+              Dismiss
+            </button>
+          </div>
+        ) : null}
 
-      {vm.bookingActionError ? (
-        <div className="mb-4 rounded-xl border border-error-500/30 bg-error-500/10 px-4 py-3 text-sm text-error-500">
-          {vm.bookingActionError}
-          <button
-            type="button"
-            className="ml-3 underline"
-            onClick={vm.clearBookingActionError}
-          >
-            Dismiss
-          </button>
-        </div>
-      ) : null}
-
-      {!vm.hasReceivedTripsSnapshot ? (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Loading bookings…
-        </p>
-      ) : vm.upcomingTrips.length === 0 ? (
-        <div className="rounded-2xl border border-gray-200 bg-white px-6 py-16 text-center dark:border-gray-800 dark:bg-white/[0.03]">
-          <h3 className="font-semibold text-gray-800 dark:text-white/90">
-            No upcoming bookings
-          </h3>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            New trip requests will appear here in real time.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {vm.upcomingTrips.map((trip) => (
-            <BookingCard
-              key={trip.id}
-              trip={trip}
-              chauffeurHeadline={vm.chauffeurName(trip.driverID)}
-              customerCaption={`Customer: ${vm.customerName(trip)}`}
-              isMutating={vm.bookingMutationTripID === trip.id}
-              onConfirm={() => vm.confirmTripBooking(trip.id)}
-              onDecline={() => vm.declineTripBooking(trip.id)}
-              onCancel={() => vm.cancelActiveTrip(trip.id)}
-              onComplete={() => vm.completeTripBooking(trip.id)}
-            />
-          ))}
-        </div>
-      )}
+        <AdminDataTable
+          columns={columns}
+          rows={table.paginatedRows}
+          rowKey={(t) => t.id}
+          sortKey={table.sortKey}
+          sortDirection={table.sortDirection}
+          onSort={table.toggleSort}
+          selectedIds={table.selectedIds}
+          onToggleRow={table.toggleRow}
+          onToggleAllOnPage={table.toggleAllOnPage}
+          allOnPageSelected={table.allOnPageSelected}
+          currentPage={table.currentPage}
+          totalPages={table.totalPages}
+          onPageChange={table.setCurrentPage}
+          totalCount={table.totalCount}
+          loading={!vm.hasReceivedTripsSnapshot}
+          loadingMessage="Loading bookings…"
+          emptyTitle="No bookings match"
+          emptyDescription="New trip requests will appear here in real time."
+          renderRowActions={(trip) => (
+            <AdminTableRowMenu items={bookingMenuItems(trip)} />
+          )}
+        />
+      </AdminListPageShell>
     </div>
   );
 }

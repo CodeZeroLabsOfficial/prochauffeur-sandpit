@@ -1,86 +1,261 @@
 "use client";
 
 import AdminActionBanner from "@/components/prochauffeur/AdminActionBanner";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import AdminDataTable, {
+  type AdminTableColumn,
+} from "@/components/prochauffeur/admin-table/AdminDataTable";
+import AdminListPageShell from "@/components/prochauffeur/admin-table/AdminListPageShell";
+import {
+  PrimaryCell,
+  SecondaryCell,
+} from "@/components/prochauffeur/admin-table/AdminTableCells";
+import AdminTableRowMenu from "@/components/prochauffeur/admin-table/AdminTableRowMenu";
+import Badge from "@/components/ui/badge/Badge";
 import Button from "@/components/ui/button/Button";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
 import { useAdminOperations } from "@/context/AdminOperationsContext";
-import { capLabel, displayNameForUser, resolvedDriverProfile } from "@/lib/prochauffeur/display";
-import { CHAUFFEUR_CATEGORY_LABELS, type ChauffeurCategory } from "@/lib/prochauffeur/types";
+import { useAdminDataTable } from "@/hooks/useAdminDataTable";
+import { downloadCsv, matchesSearch } from "@/lib/prochauffeur/adminTable";
+import {
+  capLabel,
+  displayNameForUser,
+  resolvedDriverProfile,
+} from "@/lib/prochauffeur/display";
+import {
+  CHAUFFEUR_CATEGORY_LABELS,
+  type AppUser,
+  type ChauffeurCategory,
+} from "@/lib/prochauffeur/types";
+import { vehicleDisplayName } from "@/lib/prochauffeur/vehicleHelpers";
 import Link from "next/link";
-import React from "react";
+import React, { useMemo } from "react";
+
+const DRIVER_TABS = [
+  { id: "all", label: "All drivers" },
+  { id: "visible", label: "On customer app" },
+  { id: "dispatch", label: "Accepts dispatch" },
+] as const;
 
 export default function DriversRosterView() {
   const { users } = useAdminDashboard();
-  const { limits, hasReceivedOperationsSnapshot, actionError, clearActionError } =
-    useAdminOperations();
+  const {
+    limits,
+    hasReceivedOperationsSnapshot,
+    actionError,
+    clearActionError,
+    vehicleForChauffeur,
+  } = useAdminOperations();
 
-  const drivers = users
-    .filter((u) => u.role === "driver")
-    .sort((a, b) =>
-      displayNameForUser(a, a.id).localeCompare(
-        displayNameForUser(b, b.id),
-        undefined,
-        { sensitivity: "base" }
-      )
+  const drivers = useMemo(
+    () =>
+      users
+        .filter((u) => u.role === "driver")
+        .sort((a, b) =>
+          displayNameForUser(a, a.id).localeCompare(
+            displayNameForUser(b, b.id),
+            undefined,
+            { sensitivity: "base" }
+          )
+        ),
+    [users]
+  );
+
+  const table = useAdminDataTable({
+    rows: drivers,
+    rowKey: (d) => d.id,
+    tabs: [...DRIVER_TABS],
+    filterByTab: (driver, tabId) => {
+      const profile = resolvedDriverProfile(driver);
+      if (tabId === "visible") return profile.visibleOnCustomerApp;
+      if (tabId === "dispatch") return profile.acceptsDispatchAssignments;
+      return true;
+    },
+    filterBySearch: (driver, query) => {
+      const profile = resolvedDriverProfile(driver);
+      const vehicle = vehicleForChauffeur(driver.id);
+      return matchesSearch(
+        query,
+        displayNameForUser(driver, driver.id),
+        driver.email,
+        CHAUFFEUR_CATEGORY_LABELS[profile.chauffeurCategory as ChauffeurCategory],
+        vehicle ? vehicleDisplayName(vehicle) : ""
+      );
+    },
+    sortValue: (driver, key) => {
+      const profile = resolvedDriverProfile(driver);
+      const vehicle = vehicleForChauffeur(driver.id);
+      switch (key) {
+        case "name":
+          return displayNameForUser(driver, driver.id);
+        case "category":
+          return CHAUFFEUR_CATEGORY_LABELS[
+            profile.chauffeurCategory as ChauffeurCategory
+          ];
+        case "email":
+          return driver.email;
+        case "vehicle":
+          return vehicle ? vehicleDisplayName(vehicle) : "";
+        default:
+          return driver.id;
+      }
+    },
+    defaultSortKey: "name",
+    defaultSortDirection: "asc",
+  });
+
+  const columns = useMemo<AdminTableColumn<AppUser>[]>(
+    () => [
+      {
+        key: "name",
+        header: "Driver",
+        sortable: true,
+        render: (driver) => (
+          <PrimaryCell>{displayNameForUser(driver, driver.id)}</PrimaryCell>
+        ),
+      },
+      {
+        key: "category",
+        header: "Category",
+        sortable: true,
+        render: (driver) => {
+          const profile = resolvedDriverProfile(driver);
+          return (
+            <SecondaryCell>
+              {
+                CHAUFFEUR_CATEGORY_LABELS[
+                  profile.chauffeurCategory as ChauffeurCategory
+                ]
+              }
+            </SecondaryCell>
+          );
+        },
+      },
+      {
+        key: "email",
+        header: "Email",
+        sortable: true,
+        render: (driver) => <SecondaryCell>{driver.email}</SecondaryCell>,
+      },
+      {
+        key: "vehicle",
+        header: "Vehicle",
+        sortable: true,
+        render: (driver) => {
+          const vehicle = vehicleForChauffeur(driver.id);
+          return (
+            <PrimaryCell>
+              {vehicle ? vehicleDisplayName(vehicle) : "No vehicle"}
+            </PrimaryCell>
+          );
+        },
+      },
+      {
+        key: "visibility",
+        header: "Visibility",
+        sortable: false,
+        align: "center",
+        render: (driver) => {
+          const profile = resolvedDriverProfile(driver);
+          return (
+            <Badge
+              color={profile.visibleOnCustomerApp ? "success" : "light"}
+              variant="light"
+              size="sm"
+            >
+              {profile.visibleOnCustomerApp ? "Visible" : "Hidden"}
+            </Badge>
+          );
+        },
+      },
+    ],
+    [vehicleForChauffeur]
+  );
+
+  const handleExport = () => {
+    downloadCsv(
+      "drivers-roster.csv",
+      ["Driver", "Category", "Email", "Vehicle", "Visibility"],
+      table.filteredRows.map((driver) => {
+        const profile = resolvedDriverProfile(driver);
+        const vehicle = vehicleForChauffeur(driver.id);
+        return [
+          displayNameForUser(driver, driver.id),
+          CHAUFFEUR_CATEGORY_LABELS[
+            profile.chauffeurCategory as ChauffeurCategory
+          ],
+          driver.email,
+          vehicle ? vehicleDisplayName(vehicle) : "No vehicle",
+          profile.visibleOnCustomerApp ? "Visible" : "Hidden",
+        ];
+      })
     );
+  };
 
   return (
     <div>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <PageBreadcrumb pageTitle="Drivers" />
-        <Link href="/drivers/new">
-          <Button size="sm">Add driver</Button>
-        </Link>
-      </div>
+      <AdminListPageShell
+        title="Drivers"
+        subtitle={`Your chauffeur roster — ${drivers.length}/${capLabel(limits.maxDrivers)} seats used.`}
+        tabs={[...DRIVER_TABS]}
+        activeTabId={table.activeTabId}
+        tabCounts={table.tabCounts}
+        onTabChange={table.setTab}
+        searchQuery={table.searchQuery}
+        onSearchChange={table.setSearch}
+        searchPlaceholder="Search drivers, email, vehicles…"
+        onFilter={table.resetFilters}
+        onExport={handleExport}
+        primaryAction={
+          <Link href="/drivers/new">
+            <Button size="sm">Add driver</Button>
+          </Link>
+        }
+      >
+        {actionError ? (
+          <div className="mb-4">
+            <AdminActionBanner message={actionError} onDismiss={clearActionError} />
+          </div>
+        ) : null}
 
-      <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
-        {drivers.length}/{capLabel(limits.maxDrivers)} driver seats used
-      </p>
-
-      {actionError ? (
-        <AdminActionBanner message={actionError} onDismiss={clearActionError} />
-      ) : null}
-
-      {!hasReceivedOperationsSnapshot ? (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Loading drivers…
-        </p>
-      ) : drivers.length === 0 ? (
-        <div className="rounded-2xl border border-gray-200 bg-white px-6 py-16 text-center dark:border-gray-800 dark:bg-white/[0.03]">
-          <h3 className="font-semibold text-gray-800 dark:text-white/90">
-            No drivers yet
-          </h3>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Driver accounts appear here once provisioned in Firebase.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {drivers.map((driver) => {
-            const profile = resolvedDriverProfile(driver);
-            return (
-              <Link
-                key={driver.id}
-                href={`/drivers/${driver.id}`}
-                className="block rounded-2xl border border-gray-200 bg-white p-5 transition hover:border-brand-300 dark:border-gray-800 dark:bg-white/[0.03] dark:hover:border-brand-800"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="font-semibold text-gray-800 dark:text-white/90">
-                      {displayNameForUser(driver, driver.id)}
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      {CHAUFFEUR_CATEGORY_LABELS[profile.chauffeurCategory as ChauffeurCategory]} · {driver.email}
-                    </p>
-                  </div>
-                  <span className="text-sm text-brand-500">Open</span>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      )}
+        <AdminDataTable
+          columns={columns}
+          rows={table.paginatedRows}
+          rowKey={(d) => d.id}
+          sortKey={table.sortKey}
+          sortDirection={table.sortDirection}
+          onSort={table.toggleSort}
+          selectedIds={table.selectedIds}
+          onToggleRow={table.toggleRow}
+          onToggleAllOnPage={table.toggleAllOnPage}
+          allOnPageSelected={table.allOnPageSelected}
+          currentPage={table.currentPage}
+          totalPages={table.totalPages}
+          onPageChange={table.setCurrentPage}
+          totalCount={table.totalCount}
+          loading={!hasReceivedOperationsSnapshot}
+          loadingMessage="Loading drivers…"
+          emptyTitle="No drivers yet"
+          emptyDescription="Driver accounts appear here once provisioned in Firebase."
+          renderRowActions={(driver) => (
+            <AdminTableRowMenu
+              items={[
+                {
+                  label: "Open profile",
+                  href: `/drivers/${driver.id}`,
+                },
+                {
+                  label: "Edit profile",
+                  href: `/drivers/${driver.id}/profile`,
+                },
+                {
+                  label: "Vehicle assignment",
+                  href: `/drivers/${driver.id}/vehicle`,
+                },
+              ]}
+            />
+          )}
+        />
+      </AdminListPageShell>
     </div>
   );
 }
