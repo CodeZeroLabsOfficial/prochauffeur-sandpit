@@ -114,14 +114,14 @@ export default function AdminDataTable<T>({
   };
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <>
       <div className="overflow-x-auto">
         {loading ? (
-          <p className="px-6 py-12 text-sm text-gray-500 dark:text-gray-400">
+          <p className="px-5 py-12 text-sm text-gray-500 dark:text-gray-400 sm:px-6">
             {loadingMessage}
           </p>
         ) : rows.length === 0 ? (
-          <div className="px-6 py-16 text-center">
+          <div className="px-5 py-16 text-center sm:px-6">
             <h3 className="font-semibold text-gray-800 dark:text-white/90">
               {emptyTitle}
             </h3>
@@ -131,7 +131,7 @@ export default function AdminDataTable<T>({
           </div>
         ) : (
           <Table>
-            <TableHeader className="border-b border-gray-100 bg-gray-50/80 dark:border-white/[0.05] dark:bg-white/[0.02]">
+            <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
                 <TableCell
                   isHeader
@@ -147,7 +147,7 @@ export default function AdminDataTable<T>({
                   <TableCell
                     key={col.key}
                     isHeader
-                    className={`px-4 py-4 text-theme-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 ${alignClass(col.align)} ${col.headerClassName ?? ""}`}
+                    className={`px-4 py-3.5 text-sm font-medium text-gray-500 dark:text-gray-400 ${alignClass(col.align)} ${col.headerClassName ?? ""}`}
                   >
                     {col.sortable ? (
                       <button
@@ -169,7 +169,7 @@ export default function AdminDataTable<T>({
                 {renderRowActions ? (
                   <TableCell
                     isHeader
-                    className="w-14 px-4 py-4 text-right text-theme-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                    className="w-14 px-4 py-3.5 text-right text-sm font-medium text-gray-500 dark:text-gray-400"
                   >
                     <span className="sr-only">Actions</span>
                   </TableCell>
@@ -226,6 +226,6 @@ export default function AdminDataTable<T>({
           ) : null}
         </div>
       ) : null}
-    </div>
+    </>
   );
 }

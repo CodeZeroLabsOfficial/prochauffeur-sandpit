@@ -4,7 +4,8 @@ import AdminActionBanner from "@/components/prochauffeur/AdminActionBanner";
 import AdminDataTable, {
   type AdminTableColumn,
 } from "@/components/prochauffeur/admin-table/AdminDataTable";
-import AdminListPageShell from "@/components/prochauffeur/admin-table/AdminListPageShell";
+import AdminListTableCard from "@/components/prochauffeur/admin-table/AdminListTableCard";
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import {
   PrimaryCell,
   SecondaryCell,
@@ -193,30 +194,34 @@ export default function DriversRosterView() {
 
   return (
     <div>
-      <AdminListPageShell
-        title="Drivers"
-        subtitle={`Your chauffeur roster — ${drivers.length}/${capLabel(limits.maxDrivers)} seats used.`}
+      <PageBreadcrumb pageTitle="Drivers" />
+
+      {actionError ? (
+        <div className="mb-4">
+          <AdminActionBanner message={actionError} onDismiss={clearActionError} />
+        </div>
+      ) : null}
+
+      <AdminListTableCard
+        tableTitle="Drivers list"
+        description={`Your chauffeur roster — ${drivers.length}/${capLabel(limits.maxDrivers)} seats used.`}
         tabs={[...DRIVER_TABS]}
         activeTabId={table.activeTabId}
         tabCounts={table.tabCounts}
         onTabChange={table.setTab}
         searchQuery={table.searchQuery}
         onSearchChange={table.setSearch}
-        searchPlaceholder="Search drivers, email, vehicles…"
+        searchPlaceholder="Search…"
         onFilter={table.resetFilters}
         onExport={handleExport}
         primaryAction={
           <Link href="/drivers/new">
-            <Button size="sm">Add driver</Button>
+            <Button size="sm" startIcon={<span aria-hidden>+</span>}>
+              Add driver
+            </Button>
           </Link>
         }
       >
-        {actionError ? (
-          <div className="mb-4">
-            <AdminActionBanner message={actionError} onDismiss={clearActionError} />
-          </div>
-        ) : null}
-
         <AdminDataTable
           columns={columns}
           rows={table.paginatedRows}
@@ -255,7 +260,7 @@ export default function DriversRosterView() {
             />
           )}
         />
-      </AdminListPageShell>
+      </AdminListTableCard>
     </div>
   );
 }

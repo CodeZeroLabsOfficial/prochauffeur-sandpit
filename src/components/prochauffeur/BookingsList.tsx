@@ -3,7 +3,8 @@
 import AdminDataTable, {
   type AdminTableColumn,
 } from "@/components/prochauffeur/admin-table/AdminDataTable";
-import AdminListPageShell from "@/components/prochauffeur/admin-table/AdminListPageShell";
+import AdminListTableCard from "@/components/prochauffeur/admin-table/AdminListTableCard";
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import {
   PrimaryCell,
   SecondaryCell,
@@ -232,32 +233,34 @@ export default function BookingsList() {
 
   return (
     <div>
-      <AdminListPageShell
-        title="Bookings"
-        subtitle="Your most recent trip requests and active bookings."
+      <PageBreadcrumb pageTitle="Bookings" />
+
+      {vm.bookingActionError ? (
+        <div className="mb-4 rounded-xl border border-error-500/30 bg-error-500/10 px-4 py-3 text-sm text-error-500">
+          {vm.bookingActionError}
+          <button
+            type="button"
+            className="ml-3 underline"
+            onClick={vm.clearBookingActionError}
+          >
+            Dismiss
+          </button>
+        </div>
+      ) : null}
+
+      <AdminListTableCard
+        tableTitle="Bookings list"
+        description="Track trip requests and active bookings across your fleet."
         tabs={[...BOOKING_TABS]}
         activeTabId={table.activeTabId}
         tabCounts={table.tabCounts}
         onTabChange={table.setTab}
         searchQuery={table.searchQuery}
         onSearchChange={table.setSearch}
-        searchPlaceholder="Search bookings, customers, routes…"
+        searchPlaceholder="Search…"
         onFilter={table.resetFilters}
         onExport={handleExport}
       >
-        {vm.bookingActionError ? (
-          <div className="mb-4 rounded-xl border border-error-500/30 bg-error-500/10 px-4 py-3 text-sm text-error-500">
-            {vm.bookingActionError}
-            <button
-              type="button"
-              className="ml-3 underline"
-              onClick={vm.clearBookingActionError}
-            >
-              Dismiss
-            </button>
-          </div>
-        ) : null}
-
         <AdminDataTable
           columns={columns}
           rows={table.paginatedRows}
@@ -281,7 +284,7 @@ export default function BookingsList() {
             <AdminTableRowMenu items={bookingMenuItems(trip)} />
           )}
         />
-      </AdminListPageShell>
+      </AdminListTableCard>
     </div>
   );
 }

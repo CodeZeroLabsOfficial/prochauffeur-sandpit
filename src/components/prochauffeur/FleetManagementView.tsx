@@ -4,7 +4,8 @@ import AdminActionBanner from "@/components/prochauffeur/AdminActionBanner";
 import AdminDataTable, {
   type AdminTableColumn,
 } from "@/components/prochauffeur/admin-table/AdminDataTable";
-import AdminListPageShell from "@/components/prochauffeur/admin-table/AdminListPageShell";
+import AdminListTableCard from "@/components/prochauffeur/admin-table/AdminListTableCard";
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import {
   PrimaryCell,
   SecondaryCell,
@@ -158,30 +159,34 @@ export default function FleetManagementView() {
 
   return (
     <div>
-      <AdminListPageShell
-        title="Fleet"
-        subtitle="Manage vehicles, assignments, and availability for dispatch."
+      <PageBreadcrumb pageTitle="Fleet" />
+
+      {actionError ? (
+        <div className="mb-4">
+          <AdminActionBanner message={actionError} onDismiss={clearActionError} />
+        </div>
+      ) : null}
+
+      <AdminListTableCard
+        tableTitle="Fleet list"
+        description="Manage vehicles, assignments, and availability for dispatch."
         tabs={[...FLEET_TABS]}
         activeTabId={table.activeTabId}
         tabCounts={table.tabCounts}
         onTabChange={table.setTab}
         searchQuery={table.searchQuery}
         onSearchChange={table.setSearch}
-        searchPlaceholder="Search vehicles, plates, chauffeurs…"
+        searchPlaceholder="Search…"
         onFilter={table.resetFilters}
         onExport={handleExport}
         primaryAction={
           <Link href="/fleet/new">
-            <Button size="sm">Add vehicle</Button>
+            <Button size="sm" startIcon={<span aria-hidden>+</span>}>
+              Add vehicle
+            </Button>
           </Link>
         }
       >
-        {actionError ? (
-          <div className="mb-4">
-            <AdminActionBanner message={actionError} onDismiss={clearActionError} />
-          </div>
-        ) : null}
-
         <AdminDataTable
           columns={columns}
           rows={table.paginatedRows}
@@ -212,7 +217,7 @@ export default function FleetManagementView() {
             />
           )}
         />
-      </AdminListPageShell>
+      </AdminListTableCard>
     </div>
   );
 }
