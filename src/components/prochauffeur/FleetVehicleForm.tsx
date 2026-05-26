@@ -4,6 +4,7 @@ import AdminActionBanner from "@/components/prochauffeur/AdminActionBanner";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
+import NumberStepper from "@/components/form/NumberStepper";
 import Button from "@/components/ui/button/Button";
 import SectionedFormModal, {
   FormSection,
@@ -174,21 +175,44 @@ export default function FleetVehicleForm({
 
   const capacitySection = (
     <div className="grid gap-5 md:grid-cols-3">
-      <NumberField
-        label="Passengers"
-        value={vehicle.passengerCapacity}
-        onChange={(v) => updateField("passengerCapacity", v)}
-      />
-      <NumberField
-        label="Small luggage"
-        value={vehicle.fleetSmallLuggageCount}
-        onChange={(v) => updateField("fleetSmallLuggageCount", v)}
-      />
-      <NumberField
-        label="Large luggage"
-        value={vehicle.fleetLargeLuggageCount}
-        onChange={(v) => updateField("fleetLargeLuggageCount", v)}
-      />
+      {isModal ? (
+        <>
+          <NumberStepper
+            label="Passengers"
+            value={vehicle.passengerCapacity}
+            min={1}
+            onChange={(v) => updateField("passengerCapacity", v)}
+          />
+          <NumberStepper
+            label="Small luggage"
+            value={vehicle.fleetSmallLuggageCount}
+            onChange={(v) => updateField("fleetSmallLuggageCount", v)}
+          />
+          <NumberStepper
+            label="Large luggage"
+            value={vehicle.fleetLargeLuggageCount}
+            onChange={(v) => updateField("fleetLargeLuggageCount", v)}
+          />
+        </>
+      ) : (
+        <>
+          <NumberField
+            label="Passengers"
+            value={vehicle.passengerCapacity}
+            onChange={(v) => updateField("passengerCapacity", v)}
+          />
+          <NumberField
+            label="Small luggage"
+            value={vehicle.fleetSmallLuggageCount}
+            onChange={(v) => updateField("fleetSmallLuggageCount", v)}
+          />
+          <NumberField
+            label="Large luggage"
+            value={vehicle.fleetLargeLuggageCount}
+            onChange={(v) => updateField("fleetLargeLuggageCount", v)}
+          />
+        </>
+      )}
     </div>
   );
 
