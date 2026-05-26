@@ -227,14 +227,15 @@ export const stubs = {
     tailAdminBase: "User profile header + preference list",
   },
   companyDetails: {
-    breadcrumb: "Company details",
-    title: "Company details",
-    description: "Fleet name, dispatch contact, logo URL, address, and public bio.",
+    breadcrumb: "Overview",
+    title: "Company overview",
+    description:
+      "Fleet name, dispatch contact, logo URL, address, and public bio — edited via modals on the overview page.",
     phase: "Phase 3",
     priority: "P1",
     iosEquivalent: "AdminCompanyDetailsEditView",
     firestore: "app_settings/company (planned)",
-    tailAdminBase: "Form elements",
+    tailAdminBase: "Profile page + modals",
   },
   companyHours: {
     breadcrumb: "Operating hours",

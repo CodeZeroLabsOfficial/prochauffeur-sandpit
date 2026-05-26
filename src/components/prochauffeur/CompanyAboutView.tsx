@@ -26,9 +26,9 @@ export default function CompanyAboutView() {
           </p>
         )}
 
-        <Link href="/company/details" className="mt-6 inline-block">
+        <Link href="/company" className="mt-6 inline-block">
           <Button variant="outline" size="sm">
-            Edit in company details
+            Edit in company overview
           </Button>
         </Link>
       </div>

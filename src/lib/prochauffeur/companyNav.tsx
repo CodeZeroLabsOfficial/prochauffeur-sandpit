@@ -7,7 +7,6 @@ import {
   GroupIcon,
   LockIcon,
   PageIcon,
-  PencilIcon,
   PieChartIcon,
   PlugInIcon,
 } from "@/icons/index";
@@ -28,11 +27,6 @@ export const companyNavSections: CompanyNavSection[] = [
     title: "Company",
     items: [
       { name: "Overview", href: "/company", icon: <BoxIcon /> },
-      {
-        name: "Details",
-        href: "/company/details",
-        icon: <PencilIcon />,
-      },
       {
         name: "About your fleet",
         href: "/company/about",
