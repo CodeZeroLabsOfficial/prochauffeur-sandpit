@@ -3,10 +3,10 @@
 import CompanySettingsSection from "@/components/company-profile/CompanySettingsSection";
 import AdminActionBanner from "@/components/prochauffeur/AdminActionBanner";
 import OperatingHoursPatternModal from "@/components/prochauffeur/OperatingHoursPatternModal";
+import FormModal from "@/components/prochauffeur/FormModal";
 import Button from "@/components/ui/button/Button";
 import { useAdminOperations } from "@/context/AdminOperationsContext";
 import { useModal } from "@/hooks/useModal";
-import { PencilIcon } from "@/icons/index";
 import {
   formatBusinessDays,
   formatBusinessHours,
@@ -51,17 +51,12 @@ function OperatingHoursPatternCard({
     : "—";
 
   return (
-    <div className="relative rounded-2xl border border-gray-200 p-5 dark:border-gray-800 lg:p-6">
-      <button
-        type="button"
-        onClick={onEdit}
-        aria-label="Edit pattern"
-        className="absolute right-5 top-5 rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200"
-      >
-        <PencilIcon className="h-4 w-4" />
-      </button>
-
-      <div className="grid grid-cols-1 gap-4 pe-10 sm:grid-cols-2 sm:gap-6">
+    <button
+      type="button"
+      onClick={onEdit}
+      className="block w-full rounded-2xl border border-gray-200 p-5 text-left transition hover:border-brand-300 dark:border-gray-800 dark:hover:border-brand-800"
+    >
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
         <SummaryField label="Business days" value={businessDays} />
         <SummaryField label="Business hours" value={businessHours} />
         <SummaryField label="Timezone" value={timeZoneLabel} />
@@ -70,7 +65,7 @@ function OperatingHoursPatternCard({
           value={formatWeekStartsOn(weekStartsOn)}
         />
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -85,38 +80,34 @@ export default function OperatingHoursView() {
   } = useAdminOperations();
 
   const { isOpen, openModal, closeModal } = useModal();
-  const [editingScheduleId, setEditingScheduleId] = useState<string | null>(
-    null
-  );
-  const [isCreating, setIsCreating] = useState(false);
+  const [formKey, setFormKey] = useState(0);
+  const [editingScheduleId, setEditingScheduleId] = useState<string | undefined>();
 
   const timeZoneLabel = formatTimeZoneLabel(
     fleetLocale.timeZoneIdentifier ?? operatingHours.timeZoneIdentifier
   );
 
-  const editingSchedule = isCreating
-    ? null
-    : editingScheduleId != null
+  const editingSchedule =
+    editingScheduleId != null
       ? (operatingHours.schedules.find((s) => s.id === editingScheduleId) ??
         null)
       : null;
 
-  function openCreateModal() {
-    setEditingScheduleId(null);
-    setIsCreating(true);
+  function openAddPatternModal() {
+    setEditingScheduleId(undefined);
+    setFormKey((key) => key + 1);
     openModal();
   }
 
-  function openEditModal(scheduleId: string) {
-    setIsCreating(false);
+  function openEditPatternModal(scheduleId: string) {
     setEditingScheduleId(scheduleId);
+    setFormKey((key) => key + 1);
     openModal();
   }
 
   function closePatternModal() {
     closeModal();
-    setEditingScheduleId(null);
-    setIsCreating(false);
+    setEditingScheduleId(undefined);
   }
 
   async function persistSchedules(
@@ -135,11 +126,12 @@ export default function OperatingHoursView() {
     weekStartsOn: number
   ) {
     clearActionError();
-    const schedules = isCreating
-      ? [...operatingHours.schedules, schedule]
-      : operatingHours.schedules.map((item) =>
-          item.id === schedule.id ? schedule : item
-        );
+    const schedules =
+      editingScheduleId == null
+        ? [...operatingHours.schedules, schedule]
+        : operatingHours.schedules.map((item) =>
+            item.id === schedule.id ? schedule : item
+          );
     return persistSchedules(schedules, weekStartsOn);
   }
 
@@ -159,7 +151,7 @@ export default function OperatingHoursView() {
         title="Operating hours"
         description="Define when your fleet dispatches trips."
         actions={
-          <Button size="sm" variant="outline" onClick={openCreateModal}>
+          <Button size="sm" onClick={openAddPatternModal}>
             Add pattern
           </Button>
         }
@@ -171,47 +163,51 @@ export default function OperatingHoursView() {
             />
           ) : null
         }
-        className="max-w-3xl space-y-6"
       >
-        <div>
-          <h4 className="mb-4 text-base font-semibold text-gray-800 dark:text-white/90">
-            Weekly patterns
-          </h4>
-
-          {operatingHours.schedules.length === 0 ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              No operating patterns yet. Add one to define when the fleet
-              dispatches.
+        {operatingHours.schedules.length === 0 ? (
+          <div className="rounded-2xl border border-gray-200 px-6 py-16 text-center dark:border-gray-800">
+            <h4 className="font-semibold text-gray-800 dark:text-white/90">
+              No patterns yet
+            </h4>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              Add a weekly pattern to define when the fleet dispatches.
             </p>
-          ) : (
-            <div className="space-y-4">
-              {operatingHours.schedules.map((schedule) => (
-                <OperatingHoursPatternCard
-                  key={schedule.id}
-                  schedule={schedule}
-                  timeZoneLabel={timeZoneLabel}
-                  weekStartsOn={operatingHours.weekStartsOn}
-                  onEdit={() => openEditModal(schedule.id)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {operatingHours.schedules.map((schedule) => (
+              <OperatingHoursPatternCard
+                key={schedule.id}
+                schedule={schedule}
+                timeZoneLabel={timeZoneLabel}
+                weekStartsOn={operatingHours.weekStartsOn}
+                onEdit={() => openEditPatternModal(schedule.id)}
+              />
+            ))}
+          </div>
+        )}
       </CompanySettingsSection>
 
-      <OperatingHoursPatternModal
+      <FormModal
         isOpen={isOpen}
         onClose={closePatternModal}
-        schedule={editingSchedule}
-        weekStartsOn={operatingHours.weekStartsOn}
-        isSaving={isSaving}
-        onSave={handleSavePattern}
-        onDelete={
-          isCreating || editingScheduleId == null
-            ? undefined
-            : handleDeletePattern
-        }
-      />
+        title={editingScheduleId ? "Edit pattern" : "Add pattern"}
+        className="max-w-2xl p-5 lg:p-10"
+      >
+        <OperatingHoursPatternModal
+          key={formKey}
+          schedule={editingSchedule}
+          weekStartsOn={operatingHours.weekStartsOn}
+          isSaving={isSaving}
+          actionError={actionError}
+          clearActionError={clearActionError}
+          onSave={handleSavePattern}
+          onDelete={
+            editingScheduleId == null ? undefined : handleDeletePattern
+          }
+          onCancel={closePatternModal}
+        />
+      </FormModal>
     </>
   );
 }
