@@ -52,7 +52,9 @@ export default function CompanyAddressCard() {
           </div>
         </div>
 
-        <CompanyProfileEditButton onClick={openModal} />
+        <div className="self-end lg:self-start">
+          <CompanyProfileEditButton onClick={openModal} />
+        </div>
       </div>
 
       <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">

@@ -103,7 +103,9 @@ export default function CompanyDetailsCard() {
               </div>
             </div>
           </div>
-          <CompanyProfileEditButton onClick={openModal} />
+          <div className="self-end xl:self-auto">
+            <CompanyProfileEditButton onClick={openModal} />
+          </div>
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:grid-cols-4 2xl:gap-x-32">
