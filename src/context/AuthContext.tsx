@@ -15,6 +15,7 @@ import React, {
   useState,
 } from "react";
 import { getFirebaseAuth } from "@/lib/firebase/client";
+import { getFirebaseSetupError, isFirebaseConfigured } from "@/lib/firebase/config";
 import { fetchUserProfile } from "@/lib/prochauffeur/firestore";
 import type { AppUser } from "@/lib/prochauffeur/types";
 
@@ -41,7 +42,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const auth = getFirebaseAuth();
+    const setupError = getFirebaseSetupError();
+    if (!isFirebaseConfigured()) {
+      setError(setupError);
+      setLoading(false);
+      return;
+    }
+
+    let auth;
+    try {
+      auth = getFirebaseAuth();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not initialize Firebase.");
+      setLoading(false);
+      return;
+    }
+
     const unsub = onAuthStateChanged(auth, async (user) => {
       setFirebaseUser(user);
       if (!user) {
@@ -71,6 +87,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
+    const setupError = getFirebaseSetupError();
+    if (setupError) {
+      setError(setupError);
+      throw new Error(setupError);
+    }
+
     setError(null);
     setLoading(true);
     try {
