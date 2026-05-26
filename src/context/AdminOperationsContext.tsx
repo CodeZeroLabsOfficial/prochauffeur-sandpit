@@ -207,6 +207,7 @@ export function AdminOperationsProvider({
       },
       operatingHours: operatingHours ?? {
         timeZoneIdentifier: null,
+        weekStartsOn: 2,
         schedules: [],
       },
       fleetLocale: fleetLocale ?? EMPTY_FLEET_LOCALE,
@@ -261,6 +262,7 @@ export function AdminOperationsProvider({
             locale,
             operatingHours ?? {
               timeZoneIdentifier: null,
+              weekStartsOn: 2,
               schedules: [],
             }
           )

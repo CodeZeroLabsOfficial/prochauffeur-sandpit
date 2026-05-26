@@ -367,11 +367,21 @@ export function parseFleetOperatingHours(
         .filter((s): s is FleetWeeklyOperatingSchedule => s != null)
     : [];
 
+  const rawWeekStart = data.weekStartsOn;
+  const weekStartsOn =
+    typeof rawWeekStart === "number" &&
+    Number.isInteger(rawWeekStart) &&
+    rawWeekStart >= 1 &&
+    rawWeekStart <= 7
+      ? rawWeekStart
+      : 2;
+
   return {
     timeZoneIdentifier:
       data.timeZoneIdentifier != null
         ? String(data.timeZoneIdentifier)
         : null,
+    weekStartsOn,
     schedules,
   };
 }

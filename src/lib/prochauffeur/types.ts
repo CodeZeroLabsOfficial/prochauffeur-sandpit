@@ -140,6 +140,8 @@ export type AppGlobalLimits = {
 
 export type AppFleetOperatingHours = {
   timeZoneIdentifier: string | null;
+  /** ISO weekday: 1 = Sunday … 7 = Saturday; default Monday (2). */
+  weekStartsOn: number;
   schedules: FleetWeeklyOperatingSchedule[];
 };
 
@@ -261,6 +263,7 @@ export const DEFAULT_GLOBAL_LIMITS: AppGlobalLimits = {
 
 export const EMPTY_OPERATING_HOURS: AppFleetOperatingHours = {
   timeZoneIdentifier: null,
+  weekStartsOn: 2,
   schedules: [],
 };
 

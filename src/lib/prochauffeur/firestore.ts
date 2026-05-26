@@ -174,6 +174,7 @@ function encodeOperatingHours(
 ): Record<string, unknown> {
   return {
     timeZoneIdentifier: hours.timeZoneIdentifier,
+    weekStartsOn: hours.weekStartsOn,
     schedules: hours.schedules.map(encodeWeeklySchedule),
   };
 }
