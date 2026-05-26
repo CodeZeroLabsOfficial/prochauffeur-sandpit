@@ -36,6 +36,21 @@ const companyLinks = [
     title: "Admin roster",
     description: "Administrator accounts and seat usage",
   },
+  {
+    href: "/company/integrations",
+    title: "Integrations",
+    description: "External services and API connections",
+  },
+  {
+    href: "/company/guides",
+    title: "Dispatch guides",
+    description: "SOPs and venue notes for your team",
+  },
+  {
+    href: "/company/about",
+    title: "About your fleet",
+    description: "Public bio shown to travelers",
+  },
 ];
 
 export default function CompanyHubView() {

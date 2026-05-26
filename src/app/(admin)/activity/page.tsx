@@ -1,5 +1,9 @@
-import { createStaticStubPage } from "@/lib/prochauffeur/staticStubPage";
+import ActivityFeedView from "@/components/prochauffeur/ActivityFeedView";
 
-const { metadata, Page } = createStaticStubPage("activity");
-export { metadata };
-export default Page;
+export const metadata = {
+  title: "Activity | ProChauffeur Dispatch",
+};
+
+export default function ActivityPage() {
+  return <ActivityFeedView />;
+}

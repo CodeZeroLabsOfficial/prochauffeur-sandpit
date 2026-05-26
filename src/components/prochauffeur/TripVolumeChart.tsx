@@ -13,10 +13,19 @@ type TripVolumeChartProps = {
     bars: TripVolumeBarPoint[];
     total: number;
   };
+  period?: TripVolumeChartPeriod;
+  onPeriodChange?: (period: TripVolumeChartPeriod) => void;
 };
 
-export default function TripVolumeChart({ section }: TripVolumeChartProps) {
-  const [period, setPeriod] = useState<TripVolumeChartPeriod>("This Week");
+export default function TripVolumeChart({
+  section,
+  period: controlledPeriod,
+  onPeriodChange,
+}: TripVolumeChartProps) {
+  const [internalPeriod, setInternalPeriod] =
+    useState<TripVolumeChartPeriod>("This Week");
+  const period = controlledPeriod ?? internalPeriod;
+  const setPeriod = onPeriodChange ?? setInternalPeriod;
   const { bars, total } = section(period);
 
   const options: ApexOptions = useMemo(

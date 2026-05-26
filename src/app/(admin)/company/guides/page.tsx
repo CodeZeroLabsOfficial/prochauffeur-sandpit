@@ -1,5 +1,14 @@
-import { createStaticStubPage } from "@/lib/prochauffeur/staticStubPage";
+import CompanyPlaceholderView from "@/components/prochauffeur/CompanyPlaceholderView";
 
-const { metadata, Page } = createStaticStubPage("companyGuides");
-export { metadata };
-export default Page;
+export const metadata = {
+  title: "Dispatch guides | ProChauffeur Dispatch",
+};
+
+export default function CompanyGuidesPage() {
+  return (
+    <CompanyPlaceholderView
+      title="Dispatch guides"
+      message="Publish quick-reference playbooks for airports, venues, and VIP protocols — your in-app equivalent of patient-facing articles. Content tools will plug into this library."
+    />
+  );
+}
