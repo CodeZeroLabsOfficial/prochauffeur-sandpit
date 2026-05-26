@@ -1,5 +1,9 @@
-import { createStaticStubPage } from "@/lib/prochauffeur/staticStubPage";
+import AdminRosterView from "@/components/prochauffeur/AdminRosterView";
 
-const { metadata, Page } = createStaticStubPage("companyAdmins");
-export { metadata };
-export default Page;
+export const metadata = {
+  title: "User management | ProChauffeur Dispatch",
+};
+
+export default function CompanyAdminsPage() {
+  return <AdminRosterView />;
+}

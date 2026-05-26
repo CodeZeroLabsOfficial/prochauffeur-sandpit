@@ -29,12 +29,12 @@ const companyLinks = [
   {
     href: "/company/pricing",
     title: "Pricing",
-    description: "Fare tiers and vehicle pricing (coming soon)",
+    description: "Fare tiers, base rates, and bookable add-ons",
   },
   {
     href: "/company/admins",
     title: "Admin roster",
-    description: "Administrator accounts (coming soon)",
+    description: "Administrator accounts and seat usage",
   },
 ];
 

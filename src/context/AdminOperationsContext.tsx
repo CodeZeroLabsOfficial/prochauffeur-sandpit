@@ -18,8 +18,10 @@ import {
   listenFleetVehicles,
   listenGlobalLimits,
   listenOperatingHours,
+  listenPricingConfig,
   saveCompanyProfile,
   saveFleetOperatingHours,
+  savePricingConfig,
   unassignFleetVehicleFromChauffeur,
   updateFleetLocation,
   updateUserDriverProfile,
@@ -32,9 +34,11 @@ import type {
   CompanyProfile,
   DriverProfile,
   FleetLocation,
+  PricingConfig,
   UserProfile,
   Vehicle,
 } from "@/lib/prochauffeur/types";
+import { DEFAULT_PRICING_CONFIG } from "@/lib/prochauffeur/types";
 
 type AdminOperationsContextValue = {
   vehicles: Vehicle[];
@@ -42,6 +46,8 @@ type AdminOperationsContextValue = {
   limits: AppGlobalLimits;
   operatingHours: AppFleetOperatingHours;
   companyProfile: CompanyProfile;
+  pricingConfig: PricingConfig;
+  hasPricingDocument: boolean;
   hasReceivedOperationsSnapshot: boolean;
   actionError: string | null;
   isSaving: boolean;
@@ -62,6 +68,7 @@ type AdminOperationsContextValue = {
   removeLocation: (id: string) => Promise<boolean>;
   saveOperatingHours: (hours: AppFleetOperatingHours) => Promise<boolean>;
   saveCompany: (profile: CompanyProfile) => Promise<boolean>;
+  savePricing: (config: PricingConfig) => Promise<boolean>;
   saveDriverProfiles: (
     uid: string,
     profile: UserProfile,
@@ -87,6 +94,10 @@ export function AdminOperationsProvider({
   const [companyProfile, setCompanyProfile] = useState<CompanyProfile | null>(
     null
   );
+  const [pricingConfig, setPricingConfig] = useState<PricingConfig | null>(
+    null
+  );
+  const [hasPricingDocument, setHasPricingDocument] = useState(false);
   const [hasReceivedOperationsSnapshot, setHasReceivedOperationsSnapshot] =
     useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -96,7 +107,7 @@ export function AdminOperationsProvider({
     let readyCount = 0;
     const markReady = () => {
       readyCount += 1;
-      if (readyCount >= 5) {
+      if (readyCount >= 6) {
         setHasReceivedOperationsSnapshot(true);
       }
     };
@@ -121,6 +132,11 @@ export function AdminOperationsProvider({
       setCompanyProfile(rows);
       markReady();
     });
+    const unsubPricing = listenPricingConfig((config, exists) => {
+      setPricingConfig(config);
+      setHasPricingDocument(exists);
+      markReady();
+    });
 
     return () => {
       unsubVehicles();
@@ -128,6 +144,7 @@ export function AdminOperationsProvider({
       unsubLimits();
       unsubHours();
       unsubCompany();
+      unsubPricing();
     };
   }, []);
 
@@ -184,6 +201,8 @@ export function AdminOperationsProvider({
         bio: "",
         logoURL: "",
       },
+      pricingConfig: pricingConfig ?? DEFAULT_PRICING_CONFIG,
+      hasPricingDocument,
       hasReceivedOperationsSnapshot,
       actionError,
       isSaving,
@@ -218,6 +237,7 @@ export function AdminOperationsProvider({
       saveOperatingHours: (hours) =>
         runMutation(() => saveFleetOperatingHours(hours)),
       saveCompany: (profile) => runMutation(() => saveCompanyProfile(profile)),
+      savePricing: (config) => runMutation(() => savePricingConfig(config)),
       saveDriverProfiles: (uid, profile, driverProfile) =>
         runMutation(async () => {
           await updateUserProfile(uid, profile);
@@ -229,11 +249,13 @@ export function AdminOperationsProvider({
     [
       actionError,
       companyProfile,
+      hasPricingDocument,
       hasReceivedOperationsSnapshot,
       isSaving,
       limits,
       locations,
       operatingHours,
+      pricingConfig,
       runMutation,
       vehicleForChauffeur,
       vehicles,

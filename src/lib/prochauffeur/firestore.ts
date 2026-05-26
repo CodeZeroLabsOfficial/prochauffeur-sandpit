@@ -27,6 +27,10 @@ import {
   parseVehicle,
 } from "@/lib/prochauffeur/parse";
 import { prepareVehicleForSave } from "@/lib/prochauffeur/vehicleHelpers";
+import {
+  encodePricingConfig,
+  parsePricingConfig,
+} from "@/lib/prochauffeur/pricingHelpers";
 import type {
   AppFleetOperatingHours,
   AppGlobalLimits,
@@ -34,6 +38,7 @@ import type {
   CompanyProfile,
   DriverProfile,
   FleetLocation,
+  PricingConfig,
   Trip,
   TripStatus,
   UserProfile,
@@ -283,6 +288,21 @@ export function listenCompanyProfile(
   );
 }
 
+export function listenPricingConfig(
+  onUpdate: (config: PricingConfig | null, exists: boolean) => void
+): () => void {
+  return onSnapshot(
+    doc(getFirestoreDb(), APP_SETTINGS, "pricing"),
+    (snapshot) => {
+      if (!snapshot.exists()) {
+        onUpdate(null, false);
+        return;
+      }
+      onUpdate(parsePricingConfig(snapshot.data()), true);
+    }
+  );
+}
+
 export async function fetchUserProfile(uid: string): Promise<AppUser | null> {
   const snap = await getDoc(doc(getFirestoreDb(), USERS, uid));
   if (!snap.exists()) return null;
@@ -470,6 +490,19 @@ export async function saveCompanyProfile(profile: CompanyProfile): Promise<void>
     doc(getFirestoreDb(), APP_SETTINGS, "company"),
     encodeCompanyProfile(profile)
   );
+}
+
+export async function savePricingConfig(config: PricingConfig): Promise<void> {
+  await setDoc(
+    doc(getFirestoreDb(), APP_SETTINGS, "pricing"),
+    encodePricingConfig(config)
+  );
+}
+
+export async function fetchPricingConfig(): Promise<PricingConfig | null> {
+  const snap = await getDoc(doc(getFirestoreDb(), APP_SETTINGS, "pricing"));
+  if (!snap.exists()) return null;
+  return parsePricingConfig(snap.data());
 }
 
 export async function deleteDriverFleetDocuments(uid: string): Promise<void> {
