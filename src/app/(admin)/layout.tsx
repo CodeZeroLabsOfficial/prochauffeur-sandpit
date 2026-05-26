@@ -4,9 +4,11 @@ import { useSidebar } from "@/context/SidebarContext";
 import AdminAuthGuard from "@/components/prochauffeur/AdminAuthGuard";
 import { AdminDashboardProvider } from "@/context/AdminDashboardContext";
 import { AdminOperationsProvider } from "@/context/AdminOperationsContext";
+import { isCompanySectionPath } from "@/lib/prochauffeur/companyNav";
 import AppHeader from "@/layout/AppHeader";
 import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 export default function AdminLayout({
@@ -15,6 +17,8 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+  const pathname = usePathname();
+  const isCompanySection = isCompanySectionPath(pathname);
 
   const mainContentMargin = isMobileOpen
     ? "ml-0"
@@ -30,12 +34,18 @@ export default function AdminLayout({
             <AppSidebar />
             <Backdrop />
             <div
-              className={`flex-1 transition-all duration-300 ease-in-out ${mainContentMargin}`}
+              className={`flex min-h-screen flex-1 flex-col transition-all duration-300 ease-in-out ${mainContentMargin}`}
             >
               <AppHeader />
-              <div className="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
-                {children}
-              </div>
+              {isCompanySection ? (
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                  {children}
+                </div>
+              ) : (
+                <div className="mx-auto w-full max-w-(--breakpoint-2xl) flex-1 p-4 md:p-6">
+                  {children}
+                </div>
+              )}
             </div>
           </div>
         </AdminOperationsProvider>

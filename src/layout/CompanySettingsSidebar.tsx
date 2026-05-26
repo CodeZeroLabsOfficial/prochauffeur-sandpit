@@ -25,9 +25,9 @@ export default function CompanySettingsSidebar({
 
   return (
     <aside
-      className={`flex w-full shrink-0 flex-col border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 lg:w-[260px] lg:border-r ${className}`}
+      className={`flex w-full shrink-0 flex-col border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 lg:w-[290px] lg:border-r ${className}`}
     >
-      <div className="border-b border-gray-200 p-4 dark:border-gray-800 lg:p-5">
+      <div className="border-b border-gray-200 px-5 py-6 dark:border-gray-800">
         <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-gray-800 dark:bg-white/[0.03]">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-500/10 text-sm font-semibold text-brand-500">
             {companyProfile.logoURL ? (
@@ -54,7 +54,7 @@ export default function CompanySettingsSidebar({
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto p-3 lg:p-4">
+      <nav className="flex-1 overflow-y-auto px-5 pb-6">
         <div className="space-y-6">
           {companyNavSections.map((section) => (
             <div key={section.title}>

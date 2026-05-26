@@ -12,18 +12,18 @@ export default function CompanySettingsLayout({
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
-    <div className="-mx-4 flex min-h-[calc(100vh-4rem)] flex-col md:-mx-6 lg:min-h-[calc(100vh-5rem)] lg:flex-row">
-      <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-800 lg:hidden">
+    <div className="flex h-full w-full flex-col bg-gray-50 dark:bg-gray-900 lg:flex-row">
+      <div className="shrink-0 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900 lg:hidden">
         <button
           type="button"
           onClick={() => setMobileNavOpen(true)}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-300"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-medium text-gray-700 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-300"
         >
           Company settings
         </button>
       </div>
 
-      <CompanySettingsSidebar className="hidden lg:flex" />
+      <CompanySettingsSidebar className="hidden lg:flex lg:h-full" />
 
       {mobileNavOpen ? (
         <div className="fixed inset-0 z-99999 lg:hidden">
@@ -55,7 +55,9 @@ export default function CompanySettingsLayout({
         </div>
       ) : null}
 
-      <div className="min-w-0 flex-1 px-4 py-4 md:px-6 md:py-6">{children}</div>
+      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto p-4 md:p-6">
+        {children}
+      </div>
     </div>
   );
 }

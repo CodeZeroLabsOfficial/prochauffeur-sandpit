@@ -92,6 +92,10 @@ export const companyNavSections: CompanyNavSection[] = [
   },
 ];
 
+export function isCompanySectionPath(pathname: string): boolean {
+  return pathname === "/company" || pathname.startsWith("/company/");
+}
+
 export function isCompanyNavActive(pathname: string, href: string): boolean {
   if (href === "/company") {
     return pathname === "/company";
