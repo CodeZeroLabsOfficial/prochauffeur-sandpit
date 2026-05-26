@@ -3,7 +3,6 @@
 import BookingCard from "@/components/prochauffeur/BookingCard";
 import MetricCard from "@/components/prochauffeur/MetricCard";
 import TripVolumeChart from "@/components/prochauffeur/TripVolumeChart";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
 import { GroupIcon } from "@/icons";
 import Link from "next/link";
@@ -14,7 +13,6 @@ export default function OverviewDashboard() {
 
   return (
     <div>
-      <PageBreadcrumb pageTitle="Overview" />
 
       {vm.bookingActionError ? (
         <div className="mb-4 rounded-xl border border-error-500/30 bg-error-500/10 px-4 py-3 text-sm text-error-500">

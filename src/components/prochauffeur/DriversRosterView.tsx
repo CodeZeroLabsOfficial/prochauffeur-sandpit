@@ -5,7 +5,6 @@ import AdminDataTable, {
   type AdminTableColumn,
 } from "@/components/prochauffeur/admin-table/AdminDataTable";
 import AdminListTableCard from "@/components/prochauffeur/admin-table/AdminListTableCard";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import {
   PrimaryCell,
   SecondaryCell,
@@ -197,7 +196,6 @@ export default function DriversRosterView() {
 
   return (
     <div>
-      <PageBreadcrumb pageTitle="Drivers" />
 
       {actionError ? (
         <div className="mb-4">

@@ -1,6 +1,5 @@
 "use client";
 
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import TripStatusBadge from "@/components/prochauffeur/TripStatusBadge";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
 import { getMapboxToken } from "@/lib/firebase/config";
@@ -141,12 +140,8 @@ export default function DispatchMapView() {
   }, [selectedTrip]);
 
   return (
-    <div className="-mx-4 -mt-2 md:-mx-6">
-      <div className="px-4 md:px-6">
-        <PageBreadcrumb pageTitle="Dispatch" />
-      </div>
-
-      <div className="mt-4 grid grid-cols-1 gap-0 xl:grid-cols-[360px_1fr] xl:gap-4 xl:px-6">
+    <div className="-mx-4 md:-mx-6">
+      <div className="grid grid-cols-1 gap-0 xl:grid-cols-[360px_1fr] xl:gap-4 xl:px-6">
         <div className="max-h-[420px] overflow-y-auto border-y border-gray-200 bg-white px-4 py-4 dark:border-gray-800 dark:bg-gray-900 xl:max-h-[calc(100vh-180px)] xl:rounded-2xl xl:border">
           <h3 className="mb-3 font-semibold text-gray-800 dark:text-white/90">
             Active trips ({activeTrips.length})

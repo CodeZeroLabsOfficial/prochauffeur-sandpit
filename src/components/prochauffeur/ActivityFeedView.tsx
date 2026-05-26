@@ -1,6 +1,5 @@
 "use client";
 
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
 import {
   ACTIVITY_TIME_RANGES,
@@ -21,7 +20,6 @@ export default function ActivityFeedView() {
 
   return (
     <div>
-      <PageBreadcrumb pageTitle="Recent activity" />
 
       <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
         Trip lifecycle events from your fleet — bookings, assignments,

@@ -4,7 +4,6 @@ import AdminDataTable, {
   type AdminTableColumn,
 } from "@/components/prochauffeur/admin-table/AdminDataTable";
 import AdminListTableCard from "@/components/prochauffeur/admin-table/AdminListTableCard";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import {
   PrimaryCell,
   SecondaryCell,
@@ -238,7 +237,6 @@ export default function BookingsList() {
 
   return (
     <div>
-      <PageBreadcrumb pageTitle="Bookings" />
 
       {vm.bookingActionError ? (
         <div className="mb-4 rounded-xl border border-error-500/30 bg-error-500/10 px-4 py-3 text-sm text-error-500">
