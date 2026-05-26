@@ -1,9 +1,8 @@
-import {
-  DynamicStubPage,
-  dynamicStubMetadata,
-} from "@/lib/prochauffeur/dynamicStubPage";
+import FleetVehicleForm from "@/components/prochauffeur/FleetVehicleForm";
 
-export const metadata = dynamicStubMetadata("fleetEdit");
+export const metadata = {
+  title: "Edit vehicle | ProChauffeur Dispatch",
+};
 
 type Props = {
   params: Promise<{ vehicleId: string }>;
@@ -11,7 +10,5 @@ type Props = {
 
 export default async function FleetVehiclePage({ params }: Props) {
   const { vehicleId } = await params;
-  return (
-    <DynamicStubPage stubKey="fleetEdit" routeParams={{ vehicleId }} />
-  );
+  return <FleetVehicleForm vehicleId={vehicleId} />;
 }

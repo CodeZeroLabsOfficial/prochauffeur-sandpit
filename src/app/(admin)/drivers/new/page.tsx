@@ -1,5 +1,9 @@
-import { createStaticStubPage } from "@/lib/prochauffeur/staticStubPage";
+import AddDriverNoticeView from "@/components/prochauffeur/AddDriverNoticeView";
 
-const { metadata, Page } = createStaticStubPage("addDriver");
-export { metadata };
-export default Page;
+export const metadata = {
+  title: "Add driver | ProChauffeur Dispatch",
+};
+
+export default function AddDriverPage() {
+  return <AddDriverNoticeView />;
+}

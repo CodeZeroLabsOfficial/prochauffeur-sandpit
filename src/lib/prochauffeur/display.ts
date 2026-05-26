@@ -1,5 +1,5 @@
-import type { AppUser, Trip, TripStatus } from "./types";
-import { TRIP_STATUS_LABELS } from "./types";
+import type { AppUser, DriverProfile, Trip, TripStatus } from "./types";
+import { TRIP_STATUS_LABELS, defaultDriverProfile } from "./types";
 
 const summaryDateTime = new Intl.DateTimeFormat(undefined, {
   dateStyle: "medium",
@@ -88,4 +88,40 @@ export function vehicleSubtitle(trip: Trip): string {
 
 export function statusLabel(status: TripStatus): string {
   return TRIP_STATUS_LABELS[status];
+}
+
+export function capLabel(value: number): string {
+  return value >= Number.MAX_SAFE_INTEGER ? "Unlimited" : String(value);
+}
+
+const WEEKDAY_ORDER = [2, 3, 4, 5, 6, 7, 1] as const;
+const WEEKDAY_SHORT: Record<number, string> = {
+  1: "Sun",
+  2: "Mon",
+  3: "Tue",
+  4: "Wed",
+  5: "Thu",
+  6: "Fri",
+  7: "Sat",
+};
+
+export function formatWeekdayNumbers(numbers: number[]): string {
+  const valid = new Set(numbers.filter((n) => n >= 1 && n <= 7));
+  const ordered = WEEKDAY_ORDER.filter((n) => valid.has(n));
+  if (ordered.length === 0) return "No days selected";
+  if (ordered.length === 7) return "Every day";
+  return ordered.map((n) => WEEKDAY_SHORT[n]).join(", ");
+}
+
+export function formatScheduleWindow(
+  startTime: string | null,
+  endTime: string | null
+): string {
+  if (!startTime && !endTime) return "Times not set";
+  if (startTime && endTime) return `${startTime} – ${endTime}`;
+  return startTime ?? endTime ?? "Times not set";
+}
+
+export function resolvedDriverProfile(user: AppUser | undefined): DriverProfile {
+  return user?.driverProfile ?? defaultDriverProfile();
 }

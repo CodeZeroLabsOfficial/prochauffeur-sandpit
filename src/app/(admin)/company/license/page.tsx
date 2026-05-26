@@ -1,5 +1,9 @@
-import { createStaticStubPage } from "@/lib/prochauffeur/staticStubPage";
+import LicenseManagementView from "@/components/prochauffeur/LicenseManagementView";
 
-const { metadata, Page } = createStaticStubPage("companyLicense");
-export { metadata };
-export default Page;
+export const metadata = {
+  title: "License management | ProChauffeur Dispatch",
+};
+
+export default function CompanyLicensePage() {
+  return <LicenseManagementView />;
+}

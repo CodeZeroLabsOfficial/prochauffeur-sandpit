@@ -1,5 +1,9 @@
-import { createStaticStubPage } from "@/lib/prochauffeur/staticStubPage";
+import LocationFormView from "@/components/prochauffeur/LocationFormView";
 
-const { metadata, Page } = createStaticStubPage("locationNew");
-export { metadata };
-export default Page;
+export const metadata = {
+  title: "Add location | ProChauffeur Dispatch",
+};
+
+export default function NewLocationPage() {
+  return <LocationFormView />;
+}

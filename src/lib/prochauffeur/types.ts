@@ -25,13 +25,198 @@ export type UserProfile = {
   dateOfBirth?: Date | null;
 };
 
+export type ChauffeurCategory =
+  | "leadChauffeur"
+  | "chauffeur"
+  | "fleetConcierge"
+  | "dispatcher"
+  | "other";
+
+export type FleetWeeklyOperatingSchedule = {
+  id: string;
+  isEnabled: boolean;
+  weekdayNumbers: number[];
+  startTime: string | null;
+  endTime: string | null;
+};
+
+export type DriverProfile = {
+  chauffeurCategory: ChauffeurCategory;
+  qualifications: string[];
+  bioStatement: string;
+  serviceSpecialties: string[];
+  vehicleOrServiceFocus: string[];
+  availabilitySchedules: FleetWeeklyOperatingSchedule[];
+  timeZoneIdentifier: string | null;
+  preferredGarageLocationId: string | null;
+  driversLicenseSummary: string | null;
+  driversLicenseNumber: string | null;
+  driversLicenseClassOrType: string | null;
+  driversLicenseConditions: string | null;
+  driversLicenseConditionCodes: string | null;
+  driversLicenseJurisdictionCode: string | null;
+  driversLicenseExpiry: Date | null;
+  operatorAccreditationNumber: string | null;
+  operatorAccreditationIssuingAuthority: string | null;
+  operatorAccreditationExpiry: Date | null;
+  visibleOnCustomerApp: boolean;
+  acceptsDispatchAssignments: boolean;
+  homeAddressLine: string | null;
+};
+
 export type AppUser = {
   id: string;
   role: UserRole;
   email: string;
   profile: UserProfile;
+  driverProfile?: DriverProfile | null;
   createdAt: Date;
 };
+
+export type VehicleType =
+  | "sedan"
+  | "suv"
+  | "stretch_limo"
+  | "sprinter_van";
+
+export type VehicleSpecificationChip = {
+  id: string;
+  systemImageName: string;
+  title: string;
+  value: string;
+};
+
+export type VehicleCarFeatureRow = {
+  id: string;
+  label: string;
+  value: string;
+};
+
+export type Vehicle = {
+  driverID: string;
+  assignedChauffeurUserId: string | null;
+  make: string;
+  model: string;
+  color: string;
+  licensePlate: string;
+  passengerCapacity: number;
+  manufactureYear: number | null;
+  registrationJurisdictionCode: string | null;
+  registrationExpiry: Date | null;
+  pricingVehicleType: VehicleType;
+  specificationChips: VehicleSpecificationChip[];
+  carFeatureRows: VehicleCarFeatureRow[];
+  luggageDescription: string;
+  fleetSmallLuggageCount: number;
+  fleetLargeLuggageCount: number;
+  wifiServiceDescription: string;
+  serviceClassDescription: string;
+  interiorDescription: string;
+  climateControlDescription: string;
+  gearTypeDescription: string;
+};
+
+export type FleetLocation = {
+  id: string;
+  name: string;
+  addressLine: string;
+  latitude: number;
+  longitude: number;
+  createdAt: Date;
+};
+
+export type AppGlobalLimits = {
+  maxAdmins: number;
+  maxDrivers: number;
+  maxLocations: number;
+  subscriptionTier: string;
+};
+
+export type AppFleetOperatingHours = {
+  timeZoneIdentifier: string | null;
+  schedules: FleetWeeklyOperatingSchedule[];
+};
+
+export type CompanyProfile = {
+  displayName: string;
+  address: string;
+  phone: string;
+  email: string;
+  bio: string;
+  logoURL: string;
+};
+
+export const CHAUFFEUR_CATEGORY_LABELS: Record<ChauffeurCategory, string> = {
+  leadChauffeur: "Lead chauffeur",
+  chauffeur: "Chauffeur",
+  fleetConcierge: "Fleet concierge",
+  dispatcher: "Dispatcher",
+  other: "Other",
+};
+
+export const VEHICLE_TYPE_LABELS: Record<VehicleType, string> = {
+  sedan: "Sedan",
+  suv: "SUV",
+  stretch_limo: "Stretch Limo",
+  sprinter_van: "Sprinter Van",
+};
+
+export const UNLIMITED_CAP = Number.MAX_SAFE_INTEGER;
+
+export const DEFAULT_GLOBAL_LIMITS: AppGlobalLimits = {
+  maxAdmins: UNLIMITED_CAP,
+  maxDrivers: UNLIMITED_CAP,
+  maxLocations: UNLIMITED_CAP,
+  subscriptionTier: "",
+};
+
+export const EMPTY_OPERATING_HOURS: AppFleetOperatingHours = {
+  timeZoneIdentifier: null,
+  schedules: [],
+};
+
+export const EMPTY_COMPANY_PROFILE: CompanyProfile = {
+  displayName: "",
+  address: "",
+  phone: "",
+  email: "",
+  bio: "",
+  logoURL: "",
+};
+
+export function defaultDriverProfile(): DriverProfile {
+  return {
+    chauffeurCategory: "chauffeur",
+    qualifications: [],
+    bioStatement: "",
+    serviceSpecialties: [],
+    vehicleOrServiceFocus: [],
+    availabilitySchedules: [
+      {
+        id: "primary",
+        isEnabled: true,
+        weekdayNumbers: [2, 3, 4, 5, 6],
+        startTime: null,
+        endTime: null,
+      },
+    ],
+    timeZoneIdentifier: null,
+    preferredGarageLocationId: null,
+    driversLicenseSummary: null,
+    driversLicenseNumber: null,
+    driversLicenseClassOrType: null,
+    driversLicenseConditions: null,
+    driversLicenseConditionCodes: null,
+    driversLicenseJurisdictionCode: null,
+    driversLicenseExpiry: null,
+    operatorAccreditationNumber: null,
+    operatorAccreditationIssuingAuthority: null,
+    operatorAccreditationExpiry: null,
+    visibleOnCustomerApp: true,
+    acceptsDispatchAssignments: true,
+    homeAddressLine: null,
+  };
+}
 
 export type VehicleSnapshot = {
   displayName?: string;

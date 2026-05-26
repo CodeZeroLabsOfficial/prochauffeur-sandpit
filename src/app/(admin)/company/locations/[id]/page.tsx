@@ -1,15 +1,14 @@
-import {
-  DynamicStubPage,
-  dynamicStubMetadata,
-} from "@/lib/prochauffeur/dynamicStubPage";
+import LocationFormView from "@/components/prochauffeur/LocationFormView";
 
-export const metadata = dynamicStubMetadata("locationEdit");
+export const metadata = {
+  title: "Edit location | ProChauffeur Dispatch",
+};
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
-export default async function LocationEditPage({ params }: Props) {
+export default async function EditLocationPage({ params }: Props) {
   const { id } = await params;
-  return <DynamicStubPage stubKey="locationEdit" routeParams={{ id }} />;
+  return <LocationFormView locationId={id} />;
 }

@@ -1,5 +1,9 @@
-import { createStaticStubPage } from "@/lib/prochauffeur/staticStubPage";
+import OperatingHoursView from "@/components/prochauffeur/OperatingHoursView";
 
-const { metadata, Page } = createStaticStubPage("companyHours");
-export { metadata };
-export default Page;
+export const metadata = {
+  title: "Operating hours | ProChauffeur Dispatch",
+};
+
+export default function CompanyHoursPage() {
+  return <OperatingHoursView />;
+}

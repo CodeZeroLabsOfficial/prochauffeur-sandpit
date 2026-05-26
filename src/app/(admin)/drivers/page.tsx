@@ -1,5 +1,9 @@
-import { createStaticStubPage } from "@/lib/prochauffeur/staticStubPage";
+import DriversRosterView from "@/components/prochauffeur/DriversRosterView";
 
-const { metadata, Page } = createStaticStubPage("drivers");
-export { metadata };
-export default Page;
+export const metadata = {
+  title: "Drivers | ProChauffeur Dispatch",
+};
+
+export default function DriversPage() {
+  return <DriversRosterView />;
+}

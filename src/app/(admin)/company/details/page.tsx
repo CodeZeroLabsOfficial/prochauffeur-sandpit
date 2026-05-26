@@ -1,5 +1,9 @@
-import { createStaticStubPage } from "@/lib/prochauffeur/staticStubPage";
+import CompanyDetailsView from "@/components/prochauffeur/CompanyDetailsView";
 
-const { metadata, Page } = createStaticStubPage("companyDetails");
-export { metadata };
-export default Page;
+export const metadata = {
+  title: "Company details | ProChauffeur Dispatch",
+};
+
+export default function CompanyDetailsPage() {
+  return <CompanyDetailsView />;
+}

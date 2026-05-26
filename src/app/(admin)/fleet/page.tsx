@@ -1,5 +1,9 @@
-import { createStaticStubPage } from "@/lib/prochauffeur/staticStubPage";
+import FleetManagementView from "@/components/prochauffeur/FleetManagementView";
 
-const { metadata, Page } = createStaticStubPage("fleet");
-export { metadata };
-export default Page;
+export const metadata = {
+  title: "Fleet | ProChauffeur Dispatch",
+};
+
+export default function FleetPage() {
+  return <FleetManagementView />;
+}
