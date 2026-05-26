@@ -1,9 +1,5 @@
-import LicenseManagementView from "@/components/prochauffeur/LicenseManagementView";
-
-export const metadata = {
-  title: "License management | ProChauffeur Dispatch",
-};
+import CompanySectionRedirect from "@/components/prochauffeur/CompanySectionRedirect";
 
 export default function CompanyLicensePage() {
-  return <LicenseManagementView />;
+  return <CompanySectionRedirect sectionId="license" />;
 }

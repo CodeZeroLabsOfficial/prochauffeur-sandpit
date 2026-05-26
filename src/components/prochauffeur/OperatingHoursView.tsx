@@ -1,7 +1,7 @@
 "use client";
 
+import CompanySettingsSection from "@/components/company-profile/CompanySettingsSection";
 import AdminActionBanner from "@/components/prochauffeur/AdminActionBanner";
-import CompanySettingsPage from "@/components/company-profile/CompanySettingsPage";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
@@ -11,7 +11,6 @@ import {
   formatWeekdayNumbers,
 } from "@/lib/prochauffeur/display";
 import type { FleetWeeklyOperatingSchedule } from "@/lib/prochauffeur/types";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const WEEKDAY_OPTIONS = [
@@ -35,7 +34,6 @@ function makeSchedule(): FleetWeeklyOperatingSchedule {
 }
 
 export default function OperatingHoursView() {
-  const router = useRouter();
   const {
     operatingHours,
     saveOperatingHours,
@@ -78,16 +76,22 @@ export default function OperatingHoursView() {
     );
   }
 
+  function handleCancel() {
+    setTimeZoneIdentifier(operatingHours.timeZoneIdentifier ?? "");
+    setSchedules(operatingHours.schedules);
+    clearActionError();
+  }
+
   async function handleSave() {
-    const ok = await saveOperatingHours({
+    await saveOperatingHours({
       timeZoneIdentifier: timeZoneIdentifier.trim() || null,
       schedules,
     });
-    if (ok) router.push("/company");
   }
 
   return (
-    <CompanySettingsPage
+    <CompanySettingsSection
+      id="operating-hours"
       title="Operating hours"
       description="Define when your fleet dispatches trips and which time zone applies."
       actions={
@@ -109,22 +113,22 @@ export default function OperatingHoursView() {
       }
       className="max-w-3xl space-y-6"
     >
-        <div className="rounded-2xl border border-gray-200 p-5 dark:border-gray-800 lg:p-6">
-          <Label>Fleet time zone (IANA)</Label>
-          <Input
-            value={timeZoneIdentifier}
-            onChange={(e) => setTimeZoneIdentifier(e.target.value)}
-            placeholder="Australia/Sydney"
-          />
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Used for dispatch scheduling and weekly patterns.
-          </p>
-        </div>
+      <div className="rounded-2xl border border-gray-200 p-5 dark:border-gray-800 lg:p-6">
+        <Label>Fleet time zone (IANA)</Label>
+        <Input
+          value={timeZoneIdentifier}
+          onChange={(e) => setTimeZoneIdentifier(e.target.value)}
+          placeholder="Australia/Sydney"
+        />
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          Used for dispatch scheduling and weekly patterns.
+        </p>
+      </div>
 
-        <div>
-          <h4 className="mb-4 text-base font-semibold text-gray-800 dark:text-white/90">
-            Weekly patterns
-          </h4>
+      <div>
+        <h4 className="mb-4 text-base font-semibold text-gray-800 dark:text-white/90">
+          Weekly patterns
+        </h4>
 
         {schedules.length === 0 ? (
           <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -218,17 +222,16 @@ export default function OperatingHoursView() {
             ))}
           </div>
         )}
+      </div>
 
-        </div>
-
-        <div className="flex gap-3">
-          <Button disabled={isSaving} onClick={handleSave}>
-            {isSaving ? "Saving…" : "Save operating hours"}
-          </Button>
-          <Button variant="outline" disabled={isSaving} onClick={() => router.push("/company")}>
-            Cancel
-          </Button>
-        </div>
-    </CompanySettingsPage>
+      <div className="flex gap-3">
+        <Button disabled={isSaving} onClick={handleSave}>
+          {isSaving ? "Saving…" : "Save operating hours"}
+        </Button>
+        <Button variant="outline" disabled={isSaving} onClick={handleCancel}>
+          Cancel
+        </Button>
+      </div>
+    </CompanySettingsSection>
   );
 }

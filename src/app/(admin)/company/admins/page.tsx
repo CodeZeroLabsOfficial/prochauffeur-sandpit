@@ -1,9 +1,5 @@
-import AdminRosterView from "@/components/prochauffeur/AdminRosterView";
-
-export const metadata = {
-  title: "User management | ProChauffeur Dispatch",
-};
+import CompanySectionRedirect from "@/components/prochauffeur/CompanySectionRedirect";
 
 export default function CompanyAdminsPage() {
-  return <AdminRosterView />;
+  return <CompanySectionRedirect sectionId="administrators" />;
 }

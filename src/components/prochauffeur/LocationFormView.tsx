@@ -1,7 +1,6 @@
 "use client";
 
 import AdminActionBanner from "@/components/prochauffeur/AdminActionBanner";
-import CompanySettingsPage from "@/components/company-profile/CompanySettingsPage";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
@@ -96,7 +95,7 @@ export default function LocationFormView({
         onSuccess();
         return;
       }
-      router.push("/company/locations");
+      router.push("/company#locations");
       return;
     }
 
@@ -115,7 +114,7 @@ export default function LocationFormView({
       onSuccess();
       return;
     }
-    router.push("/company/locations");
+    router.push("/company#locations");
   }
 
   async function handleDelete() {
@@ -126,7 +125,7 @@ export default function LocationFormView({
       onSuccess();
       return;
     }
-    router.push("/company/locations");
+    router.push("/company#locations");
   }
 
   function handleCancel() {
@@ -134,7 +133,7 @@ export default function LocationFormView({
       onCancel();
       return;
     }
-    router.push("/company/locations");
+    router.push("/company#locations");
   }
 
   const formBody = (
@@ -200,7 +199,7 @@ export default function LocationFormView({
           </Button>
         </div>
 
-        {!isNew && !isModal ? (
+        {!isNew ? (
           <div className="border-t border-gray-200 pt-6 dark:border-gray-800">
             {!confirmDelete ? (
               <Button
@@ -236,20 +235,5 @@ export default function LocationFormView({
     </>
   );
 
-  if (isModal) {
-    return formBody;
-  }
-
-  return (
-    <CompanySettingsPage
-      title={isNew ? "Add location" : "Edit location"}
-      description={
-        isNew
-          ? "Add yards, offices, or satellite bases used by dispatch."
-          : "Update location details and coordinates."
-      }
-    >
-      {formBody}
-    </CompanySettingsPage>
-  );
+  return formBody;
 }

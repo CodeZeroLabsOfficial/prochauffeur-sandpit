@@ -1,9 +1,5 @@
-import PricingConfigView from "@/components/prochauffeur/PricingConfigView";
-
-export const metadata = {
-  title: "Pricing | ProChauffeur Dispatch",
-};
+import CompanySectionRedirect from "@/components/prochauffeur/CompanySectionRedirect";
 
 export default function CompanyPricingPage() {
-  return <PricingConfigView />;
+  return <CompanySectionRedirect sectionId="pricing" />;
 }

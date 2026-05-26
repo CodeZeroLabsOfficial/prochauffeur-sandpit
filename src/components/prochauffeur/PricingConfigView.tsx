@@ -1,6 +1,6 @@
 "use client";
 
-import CompanySettingsPage from "@/components/company-profile/CompanySettingsPage";
+import CompanySettingsSection from "@/components/company-profile/CompanySettingsSection";
 import AdminActionBanner from "@/components/prochauffeur/AdminActionBanner";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
@@ -12,11 +12,9 @@ import type {
   PricingConfig,
   PricingVehicleTier,
 } from "@/lib/prochauffeur/types";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 export default function PricingConfigView() {
-  const router = useRouter();
   const {
     pricingConfig,
     hasPricingDocument,
@@ -89,12 +87,18 @@ export default function PricingConfigView() {
       return;
     }
     setLocalError(null);
-    const ok = await savePricing(config);
-    if (ok) router.push("/company");
+    await savePricing(config);
+  }
+
+  function handleCancel() {
+    setConfig(pricingConfig);
+    setLocalError(null);
+    clearActionError();
   }
 
   return (
-    <CompanySettingsPage
+    <CompanySettingsSection
+      id="pricing"
       title="Pricing"
       description="Configure fares, vehicle tiers, and add-ons for quotes and bookings."
     >
@@ -285,7 +289,7 @@ export default function PricingConfigView() {
               <Button
                 variant="outline"
                 disabled={isSaving}
-                onClick={() => router.push("/company")}
+                onClick={handleCancel}
               >
                 Cancel
               </Button>
@@ -293,7 +297,7 @@ export default function PricingConfigView() {
           </div>
         </>
       )}
-    </CompanySettingsPage>
+    </CompanySettingsSection>
   );
 }
 

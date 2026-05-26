@@ -1,17 +1,21 @@
 "use client";
 
-import CompanySettingsPage from "@/components/company-profile/CompanySettingsPage";
+import CompanySettingsSection from "@/components/company-profile/CompanySettingsSection";
 import AdminActionBanner from "@/components/prochauffeur/AdminActionBanner";
 import Button from "@/components/ui/button/Button";
 import FormModal from "@/components/prochauffeur/FormModal";
 import LocationFormView from "@/components/prochauffeur/LocationFormView";
+import { useCompanySettingsScroll } from "@/context/CompanySettingsScrollContext";
 import { useAdminOperations } from "@/context/AdminOperationsContext";
 import { useModal } from "@/hooks/useModal";
 import { capLabel } from "@/lib/prochauffeur/display";
-import Link from "next/link";
-import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
 
 export default function LocationsView() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { scrollToSection } = useCompanySettingsScroll();
   const {
     locations,
     limits,
@@ -20,16 +24,46 @@ export default function LocationsView() {
     clearActionError,
   } = useAdminOperations();
   const { isOpen, openModal, closeModal } = useModal();
-  const [addLocationKey, setAddLocationKey] = useState(0);
+  const [formKey, setFormKey] = useState(0);
+  const [editingLocationId, setEditingLocationId] = useState<string | undefined>();
+
+  const handledEditLocationRef = useRef<string | null>(null);
 
   function openAddLocationModal() {
-    setAddLocationKey((key) => key + 1);
+    setEditingLocationId(undefined);
+    setFormKey((key) => key + 1);
     openModal();
   }
 
+  function openEditLocationModal(locationId: string) {
+    setEditingLocationId(locationId);
+    setFormKey((key) => key + 1);
+    openModal();
+  }
+
+  function closeLocationModal() {
+    closeModal();
+    setEditingLocationId(undefined);
+    if (searchParams.get("editLocation")) {
+      router.replace("/company#locations", { scroll: false });
+    }
+  }
+
+  useEffect(() => {
+    const editLocationId = searchParams.get("editLocation");
+    if (!editLocationId || handledEditLocationRef.current === editLocationId) {
+      return;
+    }
+
+    handledEditLocationRef.current = editLocationId;
+    scrollToSection("locations");
+    openEditLocationModal(editLocationId);
+  }, [searchParams, scrollToSection]);
+
   return (
     <>
-      <CompanySettingsPage
+      <CompanySettingsSection
+        id="locations"
         title="Locations"
         description={`${locations.length}/${capLabel(limits.maxLocations)} dispatch locations`}
         actions={
@@ -39,12 +73,10 @@ export default function LocationsView() {
         }
         banner={
           actionError ? (
-            <div className="mb-4">
-              <AdminActionBanner
-                message={actionError}
-                onDismiss={clearActionError}
-              />
-            </div>
+            <AdminActionBanner
+              message={actionError}
+              onDismiss={clearActionError}
+            />
           ) : null
         }
       >
@@ -64,10 +96,11 @@ export default function LocationsView() {
         ) : (
           <div className="space-y-3">
             {locations.map((location) => (
-              <Link
+              <button
                 key={location.id}
-                href={`/company/locations/${location.id}`}
-                className="block rounded-2xl border border-gray-200 p-5 transition hover:border-brand-300 dark:border-gray-800 dark:hover:border-brand-800"
+                type="button"
+                onClick={() => openEditLocationModal(location.id)}
+                className="block w-full rounded-2xl border border-gray-200 p-5 text-left transition hover:border-brand-300 dark:border-gray-800 dark:hover:border-brand-800"
               >
                 <h4 className="font-semibold text-gray-800 dark:text-white/90">
                   {location.name}
@@ -78,23 +111,24 @@ export default function LocationsView() {
                 <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
                   {location.latitude.toFixed(5)}, {location.longitude.toFixed(5)}
                 </p>
-              </Link>
+              </button>
             ))}
           </div>
         )}
-      </CompanySettingsPage>
+      </CompanySettingsSection>
 
       <FormModal
         isOpen={isOpen}
-        onClose={closeModal}
-        title="Add location"
+        onClose={closeLocationModal}
+        title={editingLocationId ? "Edit location" : "Add location"}
         className="max-w-2xl p-5 lg:p-10"
       >
         <LocationFormView
-          key={addLocationKey}
+          key={formKey}
+          locationId={editingLocationId}
           variant="modal"
-          onSuccess={closeModal}
-          onCancel={closeModal}
+          onSuccess={closeLocationModal}
+          onCancel={closeLocationModal}
         />
       </FormModal>
     </>

@@ -13,6 +13,7 @@ import {
 
 export type CompanyNavItem = {
   name: string;
+  sectionId: string;
   href: string;
   icon: ReactNode;
 };
@@ -22,14 +23,22 @@ export type CompanyNavSection = {
   items: CompanyNavItem[];
 };
 
+export const defaultCompanySectionId = "overview";
+
 export const companyNavSections: CompanyNavSection[] = [
   {
     title: "Company",
     items: [
-      { name: "Overview", href: "/company", icon: <BoxIcon /> },
+      {
+        name: "Overview",
+        sectionId: "overview",
+        href: "/company#overview",
+        icon: <BoxIcon />,
+      },
       {
         name: "About your fleet",
-        href: "/company/about",
+        sectionId: "about-your-fleet",
+        href: "/company#about-your-fleet",
         icon: <PageIcon />,
       },
     ],
@@ -39,17 +48,20 @@ export const companyNavSections: CompanyNavSection[] = [
     items: [
       {
         name: "Operating hours",
-        href: "/company/hours",
+        sectionId: "operating-hours",
+        href: "/company#operating-hours",
         icon: <CalenderIcon />,
       },
       {
         name: "Locations",
-        href: "/company/locations",
+        sectionId: "locations",
+        href: "/company#locations",
         icon: <PieChartIcon />,
       },
       {
         name: "Dispatch guides",
-        href: "/company/guides",
+        sectionId: "dispatch-guides",
+        href: "/company#dispatch-guides",
         icon: <DocsIcon />,
       },
     ],
@@ -59,17 +71,20 @@ export const companyNavSections: CompanyNavSection[] = [
     items: [
       {
         name: "Pricing",
-        href: "/company/pricing",
+        sectionId: "pricing",
+        href: "/company#pricing",
         icon: <DollarLineIcon />,
       },
       {
         name: "License",
-        href: "/company/license",
+        sectionId: "license",
+        href: "/company#license",
         icon: <LockIcon />,
       },
       {
         name: "Administrators",
-        href: "/company/admins",
+        sectionId: "administrators",
+        href: "/company#administrators",
         icon: <GroupIcon />,
       },
     ],
@@ -79,20 +94,30 @@ export const companyNavSections: CompanyNavSection[] = [
     items: [
       {
         name: "Connections",
-        href: "/company/integrations",
+        sectionId: "connections",
+        href: "/company#connections",
         icon: <PlugInIcon />,
       },
     ],
   },
 ];
 
+export const companyNavItems = companyNavSections.flatMap(
+  (section) => section.items
+);
+
 export function isCompanySectionPath(pathname: string): boolean {
   return pathname === "/company" || pathname.startsWith("/company/");
 }
 
-export function isCompanyNavActive(pathname: string, href: string): boolean {
-  if (href === "/company") {
-    return pathname === "/company";
-  }
-  return pathname === href || pathname.startsWith(`${href}/`);
+export function isCompanyNavActive(sectionId: string, hash: string): boolean {
+  const current = hash.replace(/^#/, "") || defaultCompanySectionId;
+  return current === sectionId;
+}
+
+export function companySettingsHref(
+  sectionId: string,
+  search = ""
+): string {
+  return `/company${search}#${sectionId}`;
 }

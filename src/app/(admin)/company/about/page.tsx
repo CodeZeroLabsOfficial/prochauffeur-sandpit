@@ -1,9 +1,5 @@
-import CompanyAboutView from "@/components/prochauffeur/CompanyAboutView";
-
-export const metadata = {
-  title: "About your fleet | ProChauffeur Dispatch",
-};
+import CompanySectionRedirect from "@/components/prochauffeur/CompanySectionRedirect";
 
 export default function CompanyAboutPage() {
-  return <CompanyAboutView />;
+  return <CompanySectionRedirect sectionId="about-your-fleet" />;
 }

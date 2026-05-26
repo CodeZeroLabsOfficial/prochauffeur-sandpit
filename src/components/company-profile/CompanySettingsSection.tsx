@@ -1,6 +1,7 @@
 import React from "react";
 
-type CompanySettingsPageProps = {
+type CompanySettingsSectionProps = {
+  id: string;
   title: string;
   description?: string;
   actions?: React.ReactNode;
@@ -9,16 +10,17 @@ type CompanySettingsPageProps = {
   className?: string;
 };
 
-export default function CompanySettingsPage({
+export default function CompanySettingsSection({
+  id,
   title,
   description,
   actions,
   banner,
   children,
   className,
-}: CompanySettingsPageProps) {
+}: CompanySettingsSectionProps) {
   return (
-    <div>
+    <section id={id} className="scroll-mt-6">
       {banner}
 
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
@@ -42,6 +44,6 @@ export default function CompanySettingsPage({
 
         {className ? <div className={className}>{children}</div> : children}
       </div>
-    </div>
+    </section>
   );
 }

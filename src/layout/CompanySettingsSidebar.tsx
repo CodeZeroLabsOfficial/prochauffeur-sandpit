@@ -1,12 +1,13 @@
 "use client";
 
+import { useCompanySettingsScroll } from "@/context/CompanySettingsScrollContext";
 import {
   companyNavSections,
   isCompanyNavActive,
 } from "@/lib/prochauffeur/companyNav";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 type CompanySettingsSidebarProps = {
   onNavigate?: () => void;
@@ -18,6 +19,32 @@ export default function CompanySettingsSidebar({
   className = "",
 }: CompanySettingsSidebarProps) {
   const pathname = usePathname();
+  const { activeSection, scrollToSection } = useCompanySettingsScroll();
+  const [hash, setHash] = useState("");
+
+  useEffect(() => {
+    const updateHash = () => setHash(window.location.hash);
+    updateHash();
+    window.addEventListener("hashchange", updateHash);
+    return () => window.removeEventListener("hashchange", updateHash);
+  }, []);
+
+  const currentSection =
+    pathname === "/company" ? activeSection : hash.replace(/^#/, "");
+
+  function handleSectionClick(
+    event: React.MouseEvent<HTMLAnchorElement>,
+    sectionId: string
+  ) {
+    if (pathname !== "/company") return;
+
+    event.preventDefault();
+    scrollToSection(sectionId);
+    const nextUrl = `${window.location.pathname}${window.location.search}#${sectionId}`;
+    window.history.pushState(null, "", nextUrl);
+    setHash(`#${sectionId}`);
+    onNavigate?.();
+  }
 
   return (
     <aside
@@ -32,12 +59,17 @@ export default function CompanySettingsSidebar({
               </h3>
               <ul className="space-y-1">
                 {section.items.map((item) => {
-                  const active = isCompanyNavActive(pathname, item.href);
+                  const active =
+                    pathname === "/company"
+                      ? currentSection === item.sectionId
+                      : isCompanyNavActive(item.sectionId, hash);
                   return (
-                    <li key={item.href}>
+                    <li key={item.sectionId}>
                       <Link
                         href={item.href}
-                        onClick={onNavigate}
+                        onClick={(event) =>
+                          handleSectionClick(event, item.sectionId)
+                        }
                         className={`menu-item ${
                           active ? "menu-item-active" : "menu-item-inactive"
                         }`}

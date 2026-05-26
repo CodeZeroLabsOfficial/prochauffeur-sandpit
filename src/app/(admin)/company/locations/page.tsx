@@ -1,9 +1,5 @@
-import LocationsView from "@/components/prochauffeur/LocationsView";
-
-export const metadata = {
-  title: "Locations | ProChauffeur Dispatch",
-};
+import CompanySectionRedirect from "@/components/prochauffeur/CompanySectionRedirect";
 
 export default function CompanyLocationsPage() {
-  return <LocationsView />;
+  return <CompanySectionRedirect sectionId="locations" />;
 }

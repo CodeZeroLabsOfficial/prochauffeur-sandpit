@@ -1,60 +1,42 @@
 "use client";
 
-import CompanySettingsPage from "@/components/company-profile/CompanySettingsPage";
-import Button from "@/components/ui/button/Button";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
 import { displayNameForUser, formatSummaryDateTime } from "@/lib/prochauffeur/display";
-import Link from "next/link";
 import React from "react";
 
-export default function AdminAccountView({ userId }: { userId: string }) {
+export default function AdminAccountDetails({ userId }: { userId: string }) {
   const { userById } = useAdminDashboard();
   const admin = userById.get(userId);
 
-  const backAction = (
-    <Link href="/company/admins">
-      <Button variant="outline" size="sm">
-        Back to administrators
-      </Button>
-    </Link>
-  );
-
   if (!admin) {
     return (
-      <CompanySettingsPage
-        title="Administrator"
-        description="Account details"
-        actions={backAction}
-      >
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Administrator not found.
-        </p>
-      </CompanySettingsPage>
+      <p className="text-sm text-gray-500 dark:text-gray-400">
+        Administrator not found.
+      </p>
     );
   }
 
   if (admin.role !== "admin") {
     return (
-      <CompanySettingsPage
-        title="Administrator"
-        description="Account details"
-        actions={backAction}
-      >
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          This user is not an administrator.
-        </p>
-      </CompanySettingsPage>
+      <p className="text-sm text-gray-500 dark:text-gray-400">
+        This user is not an administrator.
+      </p>
     );
   }
 
   return (
-    <CompanySettingsPage
-      title={displayNameForUser(admin, admin.id)}
-      description="Administrator account"
-      actions={backAction}
-      className="max-w-2xl"
-    >
-      <dl className="space-y-4 text-sm">
+    <div>
+      <p className="text-sm text-gray-500 dark:text-gray-400">
+        Administrator account
+      </p>
+
+      <dl className="mt-6 space-y-4 text-sm">
+        <div>
+          <dt className="text-gray-500 dark:text-gray-400">Name</dt>
+          <dd className="mt-1 text-gray-800 dark:text-white/90">
+            {displayNameForUser(admin, admin.id)}
+          </dd>
+        </div>
         <div>
           <dt className="text-gray-500 dark:text-gray-400">Email</dt>
           <dd className="mt-1 text-gray-800 dark:text-white/90">
@@ -86,6 +68,6 @@ export default function AdminAccountView({ userId }: { userId: string }) {
           </dd>
         </div>
       </dl>
-    </CompanySettingsPage>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import CompanySettingsPage from "@/components/company-profile/CompanySettingsPage";
+import CompanySettingsSection from "@/components/company-profile/CompanySettingsSection";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
 import { useAdminOperations } from "@/context/AdminOperationsContext";
 import { capLabel } from "@/lib/prochauffeur/display";
@@ -42,7 +42,8 @@ export default function LicenseManagementView() {
   const tier = limits.subscriptionTier.trim() || "Not configured";
 
   return (
-    <CompanySettingsPage
+    <CompanySettingsSection
+      id="license"
       title="License"
       description="Subscription tier and resource limits for your fleet."
     >
@@ -72,6 +73,6 @@ export default function LicenseManagementView() {
           capLabelText={capLabel(limits.maxLocations)}
         />
       </div>
-    </CompanySettingsPage>
+    </CompanySettingsSection>
   );
 }

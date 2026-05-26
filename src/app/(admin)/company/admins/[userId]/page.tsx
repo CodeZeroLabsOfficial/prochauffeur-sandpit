@@ -1,14 +1,14 @@
-import AdminAccountView from "@/components/prochauffeur/AdminAccountView";
+import CompanySectionRedirect from "@/components/prochauffeur/CompanySectionRedirect";
 
-export const metadata = {
-  title: "Administrator | ProChauffeur Dispatch",
-};
-
-type Props = {
-  params: Promise<{ userId: string }>;
-};
-
-export default async function CompanyAdminDetailPage({ params }: Props) {
-  const { userId } = await params;
-  return <AdminAccountView userId={userId} />;
+export default function AdminAccountPage({
+  params,
+}: {
+  params: { userId: string };
+}) {
+  return (
+    <CompanySectionRedirect
+      sectionId="administrators"
+      search={`?admin=${encodeURIComponent(params.userId)}`}
+    />
+  );
 }

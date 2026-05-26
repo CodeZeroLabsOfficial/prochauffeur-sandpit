@@ -1,9 +1,5 @@
-import OperatingHoursView from "@/components/prochauffeur/OperatingHoursView";
-
-export const metadata = {
-  title: "Operating hours | ProChauffeur Dispatch",
-};
+import CompanySectionRedirect from "@/components/prochauffeur/CompanySectionRedirect";
 
 export default function CompanyHoursPage() {
-  return <OperatingHoursView />;
+  return <CompanySectionRedirect sectionId="operating-hours" />;
 }
