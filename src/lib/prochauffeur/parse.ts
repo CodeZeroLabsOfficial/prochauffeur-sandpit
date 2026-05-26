@@ -354,6 +354,9 @@ export function parseCompanyProfile(data: DocumentData): CompanyProfile {
     address: String(data.address ?? ""),
     phone: String(data.phone ?? ""),
     email: String(data.email ?? ""),
+    website: String(data.website ?? ""),
+    abn: String(data.abn ?? ""),
+    acn: String(data.acn ?? ""),
     bio: String(data.bio ?? ""),
     logoURL: String(data.logoURL ?? ""),
   };

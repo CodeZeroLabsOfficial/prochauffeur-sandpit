@@ -1,9 +1,12 @@
 "use client";
 
+import CompanyLogoPicker from "@/components/company-profile/CompanyLogoPicker";
 import CompanyProfileEditButton from "@/components/company-profile/CompanyProfileEditButton";
-import { displayValue } from "@/components/company-profile/displayValue";
+import {
+  displayValue,
+  trimmedCompanyProfile,
+} from "@/components/company-profile/displayValue";
 import Input from "@/components/form/input/InputField";
-import TextArea from "@/components/form/input/TextArea";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
@@ -19,6 +22,15 @@ function companyInitials(name: string): string {
   return `${words[0][0]}${words[1][0]}`.toUpperCase();
 }
 
+const detailFields = [
+  { key: "displayName" as const, label: "Company name" },
+  { key: "phone" as const, label: "Phone" },
+  { key: "email" as const, label: "Email" },
+  { key: "website" as const, label: "Website" },
+  { key: "abn" as const, label: "ABN" },
+  { key: "acn" as const, label: "ACN" },
+];
+
 export default function CompanyDetailsCard() {
   const { companyProfile, saveCompany, isSaving } = useAdminOperations();
   const { isOpen, openModal, closeModal } = useModal();
@@ -26,7 +38,9 @@ export default function CompanyDetailsCard() {
   const [displayName, setDisplayName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [bio, setBio] = useState("");
+  const [website, setWebsite] = useState("");
+  const [abn, setAbn] = useState("");
+  const [acn, setAcn] = useState("");
   const [logoURL, setLogoURL] = useState("");
 
   useEffect(() => {
@@ -34,7 +48,9 @@ export default function CompanyDetailsCard() {
     setDisplayName(companyProfile.displayName);
     setPhone(companyProfile.phone);
     setEmail(companyProfile.email);
-    setBio(companyProfile.bio);
+    setWebsite(companyProfile.website);
+    setAbn(companyProfile.abn);
+    setAcn(companyProfile.acn);
     setLogoURL(companyProfile.logoURL);
   }, [isOpen, companyProfile]);
 
@@ -43,23 +59,26 @@ export default function CompanyDetailsCard() {
     .map((value) => value.trim())
     .filter(Boolean)
     .join(" · ");
-  const location = companyProfile.address.trim();
 
   async function handleSave() {
-    const ok = await saveCompany({
-      displayName: displayName.trim(),
-      address: companyProfile.address.trim(),
-      phone: phone.trim(),
-      email: email.trim(),
-      bio: bio.trim(),
-      logoURL: logoURL.trim(),
-    });
+    const ok = await saveCompany(
+      trimmedCompanyProfile({
+        ...companyProfile,
+        displayName,
+        phone,
+        email,
+        website,
+        abn,
+        acn,
+        logoURL,
+      })
+    );
     if (ok) closeModal();
   }
 
   return (
     <>
-      <div>
+      <div className="rounded-2xl border border-gray-200 p-5 dark:border-gray-800 lg:p-6">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
             <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-gray-800">
@@ -82,25 +101,9 @@ export default function CompanyDetailsCard() {
               <h4 className="mb-2 text-center text-lg font-semibold text-gray-800 dark:text-white/90 xl:text-left">
                 {name}
               </h4>
-              <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
-                {subtitle ? (
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {subtitle}
-                  </p>
-                ) : (
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Add contact details
-                  </p>
-                )}
-                {location ? (
-                  <>
-                    <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block" />
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {location}
-                    </p>
-                  </>
-                ) : null}
-              </div>
+              <p className="text-center text-sm text-gray-500 dark:text-gray-400 xl:text-left">
+                {subtitle || "Add company contact details"}
+              </p>
             </div>
           </div>
           <div className="self-end xl:self-auto">
@@ -108,42 +111,17 @@ export default function CompanyDetailsCard() {
           </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:grid-cols-4 2xl:gap-x-32">
-          <div>
-            <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-              Company / fleet name
-            </p>
-            <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              {displayValue(companyProfile.displayName)}
-            </p>
-          </div>
-
-          <div>
-            <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-              Email address
-            </p>
-            <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              {displayValue(companyProfile.email)}
-            </p>
-          </div>
-
-          <div>
-            <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-              Phone
-            </p>
-            <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              {displayValue(companyProfile.phone)}
-            </p>
-          </div>
-
-          <div>
-            <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-              Public bio
-            </p>
-            <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              {displayValue(companyProfile.bio)}
-            </p>
-          </div>
+        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:grid-cols-3 2xl:gap-x-32">
+          {detailFields.map(({ key, label }) => (
+            <div key={key}>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                {label}
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                {displayValue(companyProfile[key])}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -165,22 +143,11 @@ export default function CompanyDetailsCard() {
             }}
           >
             <div className="custom-scrollbar max-h-[450px] overflow-y-auto px-2 pb-3">
-              <div>
-                <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Company logo
-                </h5>
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5">
-                  <div>
-                    <Label>Logo image URL</Label>
-                    <Input
-                      type="text"
-                      value={logoURL}
-                      onChange={(e) => setLogoURL(e.target.value)}
-                      placeholder="https://example.com/logo.png"
-                    />
-                  </div>
-                </div>
-              </div>
+              <CompanyLogoPicker
+                logoURL={logoURL}
+                companyName={displayName}
+                onLogoChange={setLogoURL}
+              />
               <div className="mt-7">
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
                   Company information
@@ -188,20 +155,11 @@ export default function CompanyDetailsCard() {
 
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Company / fleet name</Label>
+                    <Label>Company name</Label>
                     <Input
                       type="text"
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Email address</Label>
-                    <Input
-                      type="text"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
 
@@ -214,9 +172,40 @@ export default function CompanyDetailsCard() {
                     />
                   </div>
 
-                  <div className="col-span-2">
-                    <Label>Public bio</Label>
-                    <TextArea rows={4} value={bio} onChange={setBio} />
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Email</Label>
+                    <Input
+                      type="text"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>Website</Label>
+                    <Input
+                      type="text"
+                      value={website}
+                      onChange={(e) => setWebsite(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>ABN</Label>
+                    <Input
+                      type="text"
+                      value={abn}
+                      onChange={(e) => setAbn(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="col-span-2 lg:col-span-1">
+                    <Label>ACN</Label>
+                    <Input
+                      type="text"
+                      value={acn}
+                      onChange={(e) => setAcn(e.target.value)}
+                    />
                   </div>
                 </div>
               </div>

@@ -166,6 +166,9 @@ function encodeCompanyProfile(profile: CompanyProfile): Record<string, unknown> 
     address: profile.address,
     phone: profile.phone,
     email: profile.email,
+    website: profile.website,
+    abn: profile.abn,
+    acn: profile.acn,
     bio: profile.bio,
     logoURL: profile.logoURL,
   };
