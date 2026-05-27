@@ -53,6 +53,7 @@ export const BRANDING_SECTIONS: BrandingSectionDefinition[] = [
   {
     id: "logos",
     title: "Logos",
+    showAssetLabel: false,
     assets: [
       {
         key: "logo",
