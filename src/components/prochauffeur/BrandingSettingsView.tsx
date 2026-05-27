@@ -58,9 +58,16 @@ export default function BrandingSettingsView() {
             key={section.id}
             className="rounded-xl border border-gray-200 bg-gray-50/60 p-5 dark:border-gray-800 dark:bg-white/[0.02] lg:p-6"
           >
-            <h4 className="mb-5 text-sm font-semibold text-gray-800 dark:text-white/90">
-              {section.title}
-            </h4>
+            <div className="mb-5">
+              <h4 className="text-sm font-semibold text-gray-800 dark:text-white/90">
+                {section.title}
+              </h4>
+              {section.description ? (
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  {section.description}
+                </p>
+              ) : null}
+            </div>
             <div className="space-y-6">
               {section.assets.map((asset) => (
                 <BrandingAssetField
@@ -70,6 +77,7 @@ export default function BrandingSettingsView() {
                   usage={asset.usage}
                   value={draft[asset.key]}
                   preview={asset.preview}
+                  showLabel={section.showAssetLabel ?? true}
                   onChange={(value) => updateAsset(asset.key, value)}
                 />
               ))}

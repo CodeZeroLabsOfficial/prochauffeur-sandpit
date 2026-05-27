@@ -14,6 +14,8 @@ export type BrandingAssetDefinition = {
 export type BrandingSectionDefinition = {
   id: string;
   title: string;
+  description?: string;
+  showAssetLabel?: boolean;
   assets: BrandingAssetDefinition[];
 };
 
@@ -37,6 +39,8 @@ export const BRANDING_SECTIONS: BrandingSectionDefinition[] = [
   {
     id: "favicon",
     title: "Favicon",
+    description: "Browser tab and bookmarks",
+    showAssetLabel: false,
     assets: [
       {
         key: "favicon",
