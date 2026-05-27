@@ -1,6 +1,11 @@
 "use client";
 
 import AdminActionBanner from "@/components/prochauffeur/AdminActionBanner";
+import FormModal from "@/components/prochauffeur/FormModal";
+import {
+  ModalFormFooterActions,
+  ModalFormFooterSplit,
+} from "@/components/prochauffeur/modalShell";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
@@ -27,6 +32,9 @@ const selectClassName =
   "h-11 w-full appearance-none rounded-lg border border-gray-300 px-4 py-2.5 text-sm shadow-theme-xs text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800";
 
 type OperatingHoursPatternModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
   schedule: FleetWeeklyOperatingSchedule | null;
   weekStartsOn: number;
   isSaving: boolean;
@@ -37,10 +45,12 @@ type OperatingHoursPatternModalProps = {
     weekStartsOn: number
   ) => Promise<boolean>;
   onDelete?: () => Promise<boolean>;
-  onCancel: () => void;
 };
 
 export default function OperatingHoursPatternModal({
+  isOpen,
+  onClose,
+  title,
   schedule,
   weekStartsOn,
   isSaving,
@@ -48,7 +58,6 @@ export default function OperatingHoursPatternModal({
   clearActionError,
   onSave,
   onDelete,
-  onCancel,
 }: OperatingHoursPatternModalProps) {
   const isNew = schedule == null;
 
@@ -57,6 +66,7 @@ export default function OperatingHoursPatternModal({
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
+    if (!isOpen) return;
     setDraft(
       schedule ?? {
         id: crypto.randomUUID(),
@@ -68,7 +78,7 @@ export default function OperatingHoursPatternModal({
     );
     setDraftWeekStartsOn(weekStartsOn);
     setConfirmDelete(false);
-  }, [schedule, weekStartsOn]);
+  }, [isOpen, schedule, weekStartsOn]);
 
   if (!draft) return null;
 
@@ -86,138 +96,58 @@ export default function OperatingHoursPatternModal({
   async function handleSave() {
     if (!draft) return;
     const ok = await onSave(draft, draftWeekStartsOn);
-    if (ok) onCancel();
+    if (ok) onClose();
   }
 
   async function handleDelete() {
     if (!onDelete) return;
     const ok = await onDelete();
-    if (ok) onCancel();
+    if (ok) onClose();
   }
 
-  return (
-    <div className="space-y-5">
-      {actionError ? (
-        <AdminActionBanner message={actionError} onDismiss={clearActionError} />
-      ) : null}
-
-      <div>
-        <Label htmlFor="week-starts-on">Week starts on</Label>
-        <select
-          id="week-starts-on"
-          className={selectClassName}
-          value={draftWeekStartsOn}
-          onChange={(e) => setDraftWeekStartsOn(Number(e.target.value))}
+  const deleteActions =
+    !isNew && onDelete ? (
+      !confirmDelete ? (
+        <Button
+          className="!bg-error-500 hover:!bg-error-600"
+          size="sm"
+          disabled={isSaving}
+          onClick={() => setConfirmDelete(true)}
         >
-          {WEEK_START_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
+          Delete pattern
+        </Button>
+      ) : (
+        <>
+          <Button
+            className="!bg-error-500 hover:!bg-error-600"
+            size="sm"
+            disabled={isSaving}
+            onClick={() => void handleDelete()}
+          >
+            Confirm delete
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={isSaving}
+            onClick={() => setConfirmDelete(false)}
+          >
+            Cancel delete
+          </Button>
+        </>
+      )
+    ) : null;
 
-      <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-        <input
-          type="checkbox"
-          checked={draft.isEnabled}
-          onChange={(e) => setDraft({ ...draft, isEnabled: e.target.checked })}
-        />
-        Pattern enabled
-      </label>
-
-      <div>
-        <Label>Business days</Label>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {WEEKDAY_OPTIONS.map((day) => {
-            const active = draft.weekdayNumbers.includes(day.value);
-            return (
-              <button
-                key={day.value}
-                type="button"
-                className={`rounded-lg px-3 py-1.5 text-sm ${
-                  active
-                    ? "bg-brand-500 text-white"
-                    : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
-                }`}
-                onClick={() => toggleWeekday(day.value)}
-              >
-                {day.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <Label>Start time</Label>
-          <Input
-            type="time"
-            value={draft.startTime ?? ""}
-            onChange={(e) =>
-              setDraft({
-                ...draft,
-                startTime: e.target.value || null,
-              })
-            }
-          />
-        </div>
-        <div>
-          <Label>End time</Label>
-          <Input
-            type="time"
-            value={draft.endTime ?? ""}
-            onChange={(e) =>
-              setDraft({
-                ...draft,
-                endTime: e.target.value || null,
-              })
-            }
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-        <div className="flex flex-wrap gap-3">
-          {!isNew && onDelete ? (
-            !confirmDelete ? (
-              <Button
-                className="!bg-error-500 hover:!bg-error-600"
-                size="sm"
-                disabled={isSaving}
-                onClick={() => setConfirmDelete(true)}
-              >
-                Delete pattern
-              </Button>
-            ) : (
-              <>
-                <Button
-                  className="!bg-error-500 hover:!bg-error-600"
-                  size="sm"
-                  disabled={isSaving}
-                  onClick={() => void handleDelete()}
-                >
-                  Confirm delete
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={isSaving}
-                  onClick={() => setConfirmDelete(false)}
-                >
-                  Cancel delete
-                </Button>
-              </>
-            )
-          ) : null}
-        </div>
-        <div className="flex flex-wrap gap-3">
+  const footer = (
+    <ModalFormFooterSplit
+      left={deleteActions}
+      right={
+        <ModalFormFooterActions>
           <Button
             size="sm"
             variant="outline"
             disabled={isSaving}
-            onClick={onCancel}
+            onClick={onClose}
           >
             Cancel
           </Button>
@@ -228,8 +158,102 @@ export default function OperatingHoursPatternModal({
           >
             {isSaving ? "Saving…" : "Save pattern"}
           </Button>
+        </ModalFormFooterActions>
+      }
+    />
+  );
+
+  return (
+    <FormModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title}
+      footer={footer}
+      footerAlign="between"
+      size="md"
+    >
+      <div className="space-y-5">
+        {actionError ? (
+          <AdminActionBanner message={actionError} onDismiss={clearActionError} />
+        ) : null}
+
+        <div>
+          <Label htmlFor="week-starts-on">Week starts on</Label>
+          <select
+            id="week-starts-on"
+            className={selectClassName}
+            value={draftWeekStartsOn}
+            onChange={(e) => setDraftWeekStartsOn(Number(e.target.value))}
+          >
+            {WEEK_START_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+          <input
+            type="checkbox"
+            checked={draft.isEnabled}
+            onChange={(e) => setDraft({ ...draft, isEnabled: e.target.checked })}
+          />
+          Pattern enabled
+        </label>
+
+        <div>
+          <Label>Business days</Label>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {WEEKDAY_OPTIONS.map((day) => {
+              const active = draft.weekdayNumbers.includes(day.value);
+              return (
+                <button
+                  key={day.value}
+                  type="button"
+                  className={`rounded-lg px-3 py-1.5 text-sm ${
+                    active
+                      ? "bg-brand-500 text-white"
+                      : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
+                  }`}
+                  onClick={() => toggleWeekday(day.value)}
+                >
+                  {day.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <Label>Start time</Label>
+            <Input
+              type="time"
+              value={draft.startTime ?? ""}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  startTime: e.target.value || null,
+                })
+              }
+            />
+          </div>
+          <div>
+            <Label>End time</Label>
+            <Input
+              type="time"
+              value={draft.endTime ?? ""}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  endTime: e.target.value || null,
+                })
+              }
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </FormModal>
   );
 }

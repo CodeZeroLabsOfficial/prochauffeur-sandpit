@@ -1,6 +1,11 @@
 "use client";
 
 import AdminActionBanner from "@/components/prochauffeur/AdminActionBanner";
+import FormModal from "@/components/prochauffeur/FormModal";
+import {
+  ModalFormFooterActions,
+  ModalFormFooterSplit,
+} from "@/components/prochauffeur/modalShell";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
@@ -13,6 +18,7 @@ import React, { useEffect, useState } from "react";
 type LocationFormViewProps = {
   locationId?: string;
   variant?: "page" | "modal";
+  isOpen?: boolean;
   onSuccess?: () => void;
   onCancel?: () => void;
 };
@@ -20,6 +26,7 @@ type LocationFormViewProps = {
 export default function LocationFormView({
   locationId,
   variant = "page",
+  isOpen = false,
   onSuccess,
   onCancel,
 }: LocationFormViewProps) {
@@ -136,7 +143,125 @@ export default function LocationFormView({
     router.push("/company#locations");
   }
 
-  const formBody = (
+  const fields = (
+    <div className={isModal ? "space-y-5" : "max-w-2xl space-y-5"}>
+      <div>
+        <Label>Location name</Label>
+        <Input value={name} onChange={(e) => setName(e.target.value)} />
+      </div>
+      <div>
+        <Label>Address</Label>
+        <Input
+          value={addressLine}
+          onChange={(e) => setAddressLine(e.target.value)}
+        />
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={isGeocoding || !addressLine.trim()}
+          onClick={geocodeAddress}
+        >
+          {isGeocoding ? "Geocoding…" : "Look up on map"}
+        </Button>
+        {latitude != null && longitude != null ? (
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            {latitude.toFixed(5)}, {longitude.toFixed(5)}
+          </span>
+        ) : (
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            Coordinates required before save
+          </span>
+        )}
+      </div>
+    </div>
+  );
+
+  const deleteActions =
+    !isNew ? (
+      !confirmDelete ? (
+        <Button
+          className="!bg-error-500 hover:!bg-error-600"
+          size="sm"
+          disabled={isSaving}
+          onClick={() => setConfirmDelete(true)}
+        >
+          Delete location
+        </Button>
+      ) : (
+        <>
+          <Button
+            className="!bg-error-500 hover:!bg-error-600"
+            size="sm"
+            disabled={isSaving}
+            onClick={handleDelete}
+          >
+            Confirm delete
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={isSaving}
+            onClick={() => setConfirmDelete(false)}
+          >
+            Cancel delete
+          </Button>
+        </>
+      )
+    ) : null;
+
+  const footer = (
+    <ModalFormFooterSplit
+      left={deleteActions}
+      right={
+        <ModalFormFooterActions>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={isSaving}
+            onClick={handleCancel}
+          >
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            disabled={isSaving || confirmDelete}
+            onClick={handleSave}
+          >
+            {isSaving ? "Saving…" : "Save location"}
+          </Button>
+        </ModalFormFooterActions>
+      }
+    />
+  );
+
+  if (isModal) {
+    return (
+      <FormModal
+        isOpen={isOpen}
+        onClose={handleCancel}
+        title={isNew ? "Add location" : "Edit location"}
+        footer={footer}
+        footerAlign="between"
+        size="md"
+      >
+        {(actionError || localError) && (
+          <AdminActionBanner
+            message={localError ?? actionError ?? ""}
+            onDismiss={() => {
+              setLocalError(null);
+              clearActionError();
+            }}
+          />
+        )}
+        {fields}
+      </FormModal>
+    );
+  }
+
+  return (
     <>
       {(actionError || localError) && (
         <AdminActionBanner
@@ -147,99 +272,7 @@ export default function LocationFormView({
           }}
         />
       )}
-
-      <div
-        className={
-          isModal ? "space-y-5" : "max-w-2xl space-y-5"
-        }
-      >
-        <div>
-          <Label>Location name</Label>
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
-        </div>
-        <div>
-          <Label>Address</Label>
-          <Input
-            value={addressLine}
-            onChange={(e) => setAddressLine(e.target.value)}
-          />
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={isGeocoding || !addressLine.trim()}
-            onClick={geocodeAddress}
-          >
-            {isGeocoding ? "Geocoding…" : "Look up on map"}
-          </Button>
-          {latitude != null && longitude != null ? (
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              {latitude.toFixed(5)}, {longitude.toFixed(5)}
-            </span>
-          ) : (
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              Coordinates required before save
-            </span>
-          )}
-        </div>
-
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-          <div className="flex flex-wrap gap-3">
-            {!isNew ? (
-              !confirmDelete ? (
-                <Button
-                  className="!bg-error-500 hover:!bg-error-600"
-                  size="sm"
-                  disabled={isSaving}
-                  onClick={() => setConfirmDelete(true)}
-                >
-                  Delete location
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    className="!bg-error-500 hover:!bg-error-600"
-                    size="sm"
-                    disabled={isSaving}
-                    onClick={handleDelete}
-                  >
-                    Confirm delete
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={isSaving}
-                    onClick={() => setConfirmDelete(false)}
-                  >
-                    Cancel delete
-                  </Button>
-                </>
-              )
-            ) : null}
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={isSaving}
-              onClick={handleCancel}
-            >
-              Cancel
-            </Button>
-            <Button
-              size="sm"
-              disabled={isSaving || confirmDelete}
-              onClick={handleSave}
-            >
-              {isSaving ? "Saving…" : "Save location"}
-            </Button>
-          </div>
-        </div>
-      </div>
+      <div className="max-w-2xl pt-2">{footer}</div>
     </>
   );
-
-  return formBody;
 }

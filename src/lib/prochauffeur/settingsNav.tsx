@@ -1,13 +1,9 @@
 import type { ReactNode } from "react";
 import {
-  CalenderIcon,
-  DollarLineIcon,
   GroupIcon,
   LockIcon,
   PageIcon,
   PlugInIcon,
-  TimeIcon,
-  UserIcon,
 } from "@/icons/index";
 
 export type SettingsNavItem = {
@@ -46,46 +42,11 @@ export const settingsNavSections: SettingsNavSection[] = [
         href: "/settings#integrations",
         icon: <PlugInIcon />,
       },
-    ],
-  },
-  {
-    title: "Locale",
-    items: [
       {
-        name: "Language",
-        sectionId: "language",
-        href: "/settings#language",
+        name: "Locale",
+        sectionId: "locale",
+        href: "/settings#locale",
         icon: <PageIcon />,
-      },
-      {
-        name: "Country",
-        sectionId: "country",
-        href: "/settings#country",
-        icon: <UserIcon />,
-      },
-      {
-        name: "Date format",
-        sectionId: "date-format",
-        href: "/settings#date-format",
-        icon: <CalenderIcon />,
-      },
-      {
-        name: "Time format",
-        sectionId: "time-format",
-        href: "/settings#time-format",
-        icon: <TimeIcon />,
-      },
-      {
-        name: "Timezone",
-        sectionId: "timezone",
-        href: "/settings#timezone",
-        icon: <TimeIcon />,
-      },
-      {
-        name: "Number format",
-        sectionId: "number-format",
-        href: "/settings#number-format",
-        icon: <DollarLineIcon />,
       },
     ],
   },

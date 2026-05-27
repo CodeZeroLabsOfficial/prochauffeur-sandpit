@@ -8,8 +8,12 @@ import {
 } from "@/components/company-profile/displayValue";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
+import FormModal from "@/components/prochauffeur/FormModal";
+import {
+  ModalFormDescription,
+  ModalFormFooterActions,
+} from "@/components/prochauffeur/modalShell";
 import Button from "@/components/ui/button/Button";
-import { Modal } from "@/components/ui/modal";
 import { useAdminOperations } from "@/context/AdminOperationsContext";
 import { useModal } from "@/hooks/useModal";
 import Image from "next/image";
@@ -125,107 +129,104 @@ export default function CompanyDetailsCard() {
         </div>
       </SettingsEditableCard>
 
-      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
-        <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
-          <div className="px-2 pr-14">
-            <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Edit company information
-            </h4>
-            <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              Update your company details to keep your profile up-to-date.
-            </p>
-          </div>
-          <form
-            className="flex flex-col"
-            onSubmit={(e) => {
-              e.preventDefault();
-              void handleSave();
-            }}
-          >
-            <div className="custom-scrollbar max-h-[450px] overflow-y-auto px-2 pb-3">
-              <CompanyLogoPicker
-                logoURL={logoURL}
-                companyName={displayName}
-                onLogoChange={setLogoURL}
-              />
-              <div className="mt-7">
-                <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Company information
-                </h5>
+      <FormModal
+        isOpen={isOpen}
+        onClose={closeModal}
+        title="Edit company information"
+        size="lg"
+        footer={
+          <ModalFormFooterActions>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={closeModal}
+              disabled={isSaving}
+            >
+              Cancel
+            </Button>
+            <Button size="sm" disabled={isSaving} onClick={() => void handleSave()}>
+              {isSaving ? "Saving…" : "Save changes"}
+            </Button>
+          </ModalFormFooterActions>
+        }
+      >
+        <ModalFormDescription>
+          Update your company details to keep your profile up-to-date.
+        </ModalFormDescription>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleSave();
+          }}
+        >
+          <CompanyLogoPicker
+            logoURL={logoURL}
+            companyName={displayName}
+            onLogoChange={setLogoURL}
+          />
+          <div className="mt-7">
+            <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90">
+              Company information
+            </h5>
 
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Company name</Label>
-                    <Input
-                      type="text"
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
-                    />
-                  </div>
+            <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+              <div className="col-span-2 lg:col-span-1">
+                <Label>Company name</Label>
+                <Input
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                />
+              </div>
 
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Phone</Label>
-                    <Input
-                      type="text"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                    />
-                  </div>
+              <div className="col-span-2 lg:col-span-1">
+                <Label>Phone</Label>
+                <Input
+                  type="text"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
 
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Email</Label>
-                    <Input
-                      type="text"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
+              <div className="col-span-2 lg:col-span-1">
+                <Label>Email</Label>
+                <Input
+                  type="text"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
 
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Website</Label>
-                    <Input
-                      type="text"
-                      value={website}
-                      onChange={(e) => setWebsite(e.target.value)}
-                    />
-                  </div>
+              <div className="col-span-2 lg:col-span-1">
+                <Label>Website</Label>
+                <Input
+                  type="text"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                />
+              </div>
 
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>ABN</Label>
-                    <Input
-                      type="text"
-                      value={abn}
-                      onChange={(e) => setAbn(e.target.value)}
-                    />
-                  </div>
+              <div className="col-span-2 lg:col-span-1">
+                <Label>ABN</Label>
+                <Input
+                  type="text"
+                  value={abn}
+                  onChange={(e) => setAbn(e.target.value)}
+                />
+              </div>
 
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>ACN</Label>
-                    <Input
-                      type="text"
-                      value={acn}
-                      onChange={(e) => setAcn(e.target.value)}
-                    />
-                  </div>
-                </div>
+              <div className="col-span-2 lg:col-span-1">
+                <Label>ACN</Label>
+                <Input
+                  type="text"
+                  value={acn}
+                  onChange={(e) => setAcn(e.target.value)}
+                />
               </div>
             </div>
-            <div className="mt-6 flex items-center gap-3 px-2 lg:justify-end">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={closeModal}
-                disabled={isSaving}
-              >
-                Close
-              </Button>
-              <Button size="sm" disabled={isSaving} onClick={handleSave}>
-                {isSaving ? "Saving…" : "Save Changes"}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </Modal>
+          </div>
+        </form>
+      </FormModal>
     </>
   );
 }

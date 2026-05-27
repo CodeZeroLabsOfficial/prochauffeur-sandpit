@@ -1,3 +1,5 @@
+import { formatTimeZoneLabel } from "@/lib/prochauffeur/operatingHoursDisplay";
+
 export type LocaleDateFormat = "dmy" | "mdy" | "ymd";
 export type LocaleTimeFormat = "12h" | "24h";
 export type LocaleNumberFormat = "western" | "european" | "space_comma";
@@ -91,4 +93,52 @@ export function parseLocaleNumberFormat(
   return NUMBER_FORMATS.has(s as LocaleNumberFormat)
     ? (s as LocaleNumberFormat)
     : null;
+}
+
+const FALLBACK_TIME_ZONE_OPTIONS = [
+  "Pacific/Auckland",
+  "Australia/Sydney",
+  "Australia/Melbourne",
+  "Australia/Brisbane",
+  "Australia/Perth",
+  "Asia/Singapore",
+  "Asia/Hong_Kong",
+  "Asia/Tokyo",
+  "Europe/London",
+  "Europe/Paris",
+  "America/New_York",
+  "America/Chicago",
+  "America/Denver",
+  "America/Los_Angeles",
+] as const;
+
+export function formatTimeZoneOptionLabel(timeZoneIdentifier: string): string {
+  const id = timeZoneIdentifier.trim();
+  if (!id) return id;
+
+  const name = formatTimeZoneLabel(id);
+  return name === id ? id : `${name} (${id})`;
+}
+
+let cachedTimeZoneOptions: { value: string; label: string }[] | null = null;
+
+export function getLocaleTimeZoneOptions(): { value: string; label: string }[] {
+  if (cachedTimeZoneOptions) return cachedTimeZoneOptions;
+
+  const identifiers =
+    typeof Intl !== "undefined" &&
+    typeof Intl.supportedValuesOf === "function"
+      ? Intl.supportedValuesOf("timeZone")
+      : [...FALLBACK_TIME_ZONE_OPTIONS];
+
+  cachedTimeZoneOptions = identifiers
+    .map((value) => ({
+      value,
+      label: formatTimeZoneOptionLabel(value),
+    }))
+    .sort((a, b) =>
+      a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
+    );
+
+  return cachedTimeZoneOptions;
 }

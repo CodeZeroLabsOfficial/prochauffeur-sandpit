@@ -1,6 +1,11 @@
 "use client";
 
-import { Modal, ModalCloseButton } from "@/components/ui/modal";
+import {
+  ModalFormFooter,
+  ModalFormHeader,
+  modalPanelClassName,
+} from "@/components/prochauffeur/modalShell";
+import { Modal } from "@/components/ui/modal";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 export type SectionNavItem = {
@@ -96,14 +101,9 @@ export default function SectionedFormModal({
       onClose={onClose}
       containScroll
       showCloseButton={false}
-      className="flex max-h-[min(720px,calc(100vh-2rem))] w-full max-w-4xl flex-col overflow-hidden p-0"
+      className={modalPanelClassName("xl")}
     >
-      <div className="flex shrink-0 items-center justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-gray-800 sm:px-6">
-        <h4 className="text-lg font-medium text-gray-800 dark:text-white/90">
-          {title}
-        </h4>
-        <ModalCloseButton onClose={onClose} />
-      </div>
+      <ModalFormHeader title={title} onClose={onClose} />
 
       {headerExtra ? (
         <div className="shrink-0 px-5 pt-4 sm:px-6">{headerExtra}</div>
@@ -145,9 +145,7 @@ export default function SectionedFormModal({
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center justify-end gap-3 border-t border-gray-200 px-5 py-4 dark:border-gray-800 sm:px-6">
-        {footer}
-      </div>
+      <ModalFormFooter align="end">{footer}</ModalFormFooter>
     </Modal>
   );
 }

@@ -14,6 +14,7 @@ import Badge from "@/components/ui/badge/Badge";
 import Button from "@/components/ui/button/Button";
 import AddDriverNoticeContent from "@/components/prochauffeur/AddDriverNoticeContent";
 import FormModal from "@/components/prochauffeur/FormModal";
+import { ModalFormFooterActions } from "@/components/prochauffeur/modalShell";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
 import { useAdminOperations } from "@/context/AdminOperationsContext";
 import { useAdminDataTable } from "@/hooks/useAdminDataTable";
@@ -269,8 +270,15 @@ export default function DriversRosterView() {
         isOpen={isOpen}
         onClose={closeModal}
         title="Add driver"
+        footer={
+          <ModalFormFooterActions>
+            <Button size="sm" variant="outline" onClick={closeModal}>
+              Close
+            </Button>
+          </ModalFormFooterActions>
+        }
       >
-        <AddDriverNoticeContent onClose={closeModal} />
+        <AddDriverNoticeContent />
       </FormModal>
     </div>
   );

@@ -14,6 +14,7 @@ import AdminTableRowMenu, {
 import TripStatusBadge from "@/components/prochauffeur/TripStatusBadge";
 import AddBookingNoticeContent from "@/components/prochauffeur/AddBookingNoticeContent";
 import FormModal from "@/components/prochauffeur/FormModal";
+import { ModalFormFooterActions } from "@/components/prochauffeur/modalShell";
 import Button from "@/components/ui/button/Button";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
 import { useAdminDataTable } from "@/hooks/useAdminDataTable";
@@ -302,8 +303,15 @@ export default function BookingsList() {
         isOpen={isOpen}
         onClose={closeModal}
         title="Add booking"
+        footer={
+          <ModalFormFooterActions>
+            <Button size="sm" variant="outline" onClick={closeModal}>
+              Close
+            </Button>
+          </ModalFormFooterActions>
+        }
       >
-        <AddBookingNoticeContent onClose={closeModal} />
+        <AddBookingNoticeContent />
       </FormModal>
     </div>
   );

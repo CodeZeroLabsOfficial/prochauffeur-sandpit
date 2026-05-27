@@ -1,15 +1,8 @@
 "use client";
 
-import Button from "@/components/ui/button/Button";
 import React from "react";
 
-type AddDriverNoticeContentProps = {
-  onClose?: () => void;
-};
-
-export default function AddDriverNoticeContent({
-  onClose,
-}: AddDriverNoticeContentProps) {
+export default function AddDriverNoticeContent() {
   return (
     <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
       <p>
@@ -22,13 +15,6 @@ export default function AddDriverNoticeContent({
         For now, add drivers from the iOS admin app or Firebase Console, then
         manage them here once their users document exists with role driver.
       </p>
-      {onClose ? (
-        <div className="flex justify-end pt-3">
-          <Button size="sm" variant="outline" onClick={onClose}>
-            Close
-          </Button>
-        </div>
-      ) : null}
     </div>
   );
 }

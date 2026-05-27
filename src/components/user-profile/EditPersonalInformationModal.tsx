@@ -1,12 +1,16 @@
 "use client";
 
+import FormModal from "@/components/prochauffeur/FormModal";
+import {
+  ModalFormDescription,
+  ModalFormFooterActions,
+} from "@/components/prochauffeur/modalShell";
 import ProfilePicturePicker from "@/components/user-profile/ProfilePicturePicker";
 import { splitDisplayName } from "@/components/user-profile/profileDisplay";
 import { useAuth } from "@/context/AuthContext";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
-import { Modal } from "@/components/ui/modal";
 import React, { useEffect, useState } from "react";
 
 type EditPersonalInformationModalProps = {
@@ -50,94 +54,90 @@ export default function EditPersonalInformationModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
-      <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
-        <div className="px-2 pr-14">
-          <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-            Edit Personal Information
-          </h4>
-          <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-            Update your details to keep your profile up-to-date.
-          </p>
-        </div>
-        <form
-          className="flex flex-col"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSave();
-          }}
-        >
-          <div className="custom-scrollbar max-h-[450px] overflow-y-auto px-2 pb-3">
-            <ProfilePicturePicker
-              photoURL={photoURL}
-              displayName={displayName}
-              onPhotoChange={setPhotoURL}
-            />
+    <FormModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Edit personal information"
+      size="lg"
+      footer={
+        <ModalFormFooterActions>
+          <Button size="sm" variant="outline" type="button" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button size="sm" onClick={handleSave}>
+            Save changes
+          </Button>
+        </ModalFormFooterActions>
+      }
+    >
+      <ModalFormDescription>
+        Update your details to keep your profile up-to-date.
+      </ModalFormDescription>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave();
+        }}
+      >
+        <ProfilePicturePicker
+          photoURL={photoURL}
+          displayName={displayName}
+          onPhotoChange={setPhotoURL}
+        />
 
-            <div className="mt-7">
-              <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                Personal Information
-              </h5>
+        <div className="mt-7">
+          <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90">
+            Personal information
+          </h5>
 
-              <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                <div className="col-span-2 lg:col-span-1">
-                  <Label>First Name</Label>
-                  <Input
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                  />
-                </div>
+          <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+            <div className="col-span-2 lg:col-span-1">
+              <Label>First name</Label>
+              <Input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </div>
 
-                <div className="col-span-2 lg:col-span-1">
-                  <Label>Last Name</Label>
-                  <Input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                  />
-                </div>
+            <div className="col-span-2 lg:col-span-1">
+              <Label>Last name</Label>
+              <Input
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </div>
 
-                <div className="col-span-2 lg:col-span-1">
-                  <Label>Email Address</Label>
-                  <Input
-                    type="text"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
+            <div className="col-span-2 lg:col-span-1">
+              <Label>Email address</Label>
+              <Input
+                type="text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
 
-                <div className="col-span-2 lg:col-span-1">
-                  <Label>Phone</Label>
-                  <Input
-                    type="text"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                </div>
+            <div className="col-span-2 lg:col-span-1">
+              <Label>Phone</Label>
+              <Input
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
 
-                <div className="col-span-2">
-                  <Label>Bio</Label>
-                  <Input
-                    type="text"
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                  />
-                </div>
-              </div>
+            <div className="col-span-2">
+              <Label>Bio</Label>
+              <Input
+                type="text"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+              />
             </div>
           </div>
-
-          <div className="mt-6 flex items-center gap-3 px-2 lg:justify-end">
-            <Button size="sm" variant="outline" type="button" onClick={onClose}>
-              Close
-            </Button>
-            <Button size="sm" type="submit">
-              Save Changes
-            </Button>
-          </div>
-        </form>
-      </div>
-    </Modal>
+        </div>
+      </form>
+    </FormModal>
   );
 }

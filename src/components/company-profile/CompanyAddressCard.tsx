@@ -7,8 +7,12 @@ import {
 } from "@/components/company-profile/displayValue";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
+import FormModal from "@/components/prochauffeur/FormModal";
+import {
+  ModalFormDescription,
+  ModalFormFooterActions,
+} from "@/components/prochauffeur/modalShell";
 import Button from "@/components/ui/button/Button";
-import { Modal } from "@/components/ui/modal";
 import { useAdminOperations } from "@/context/AdminOperationsContext";
 import { useModal } from "@/hooks/useModal";
 import React, { useEffect, useState } from "react";
@@ -52,51 +56,47 @@ export default function CompanyAddressCard() {
         </div>
       </SettingsEditableCard>
 
-      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
-        <div className="relative w-full overflow-y-auto rounded-3xl bg-white p-4 no-scrollbar dark:bg-gray-900 lg:p-11">
-          <div className="px-2 pr-14">
-            <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Edit company address
-            </h4>
-            <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              Update your company address to keep your profile up-to-date.
-            </p>
+      <FormModal
+        isOpen={isOpen}
+        onClose={closeModal}
+        title="Edit company address"
+        footer={
+          <ModalFormFooterActions>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={closeModal}
+              disabled={isSaving}
+            >
+              Cancel
+            </Button>
+            <Button size="sm" disabled={isSaving} onClick={() => void handleSave()}>
+              {isSaving ? "Saving…" : "Save changes"}
+            </Button>
+          </ModalFormFooterActions>
+        }
+      >
+        <ModalFormDescription>
+          Update your company address to keep your profile up-to-date.
+        </ModalFormDescription>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleSave();
+          }}
+        >
+          <div className="grid grid-cols-1 gap-x-6 gap-y-5">
+            <div>
+              <Label>Company address</Label>
+              <Input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </div>
           </div>
-          <form
-            className="flex flex-col"
-            onSubmit={(e) => {
-              e.preventDefault();
-              void handleSave();
-            }}
-          >
-            <div className="custom-scrollbar overflow-y-auto px-2">
-              <div className="grid grid-cols-1 gap-x-6 gap-y-5">
-                <div>
-                  <Label>Company address</Label>
-                  <Input
-                    type="text"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="mt-6 flex items-center gap-3 px-2 lg:justify-end">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={closeModal}
-                disabled={isSaving}
-              >
-                Close
-              </Button>
-              <Button size="sm" disabled={isSaving} onClick={handleSave}>
-                {isSaving ? "Saving…" : "Save Changes"}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </Modal>
+        </form>
+      </FormModal>
     </>
   );
 }

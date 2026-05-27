@@ -1,5 +1,5 @@
 import SettingsSectionRedirect from "@/components/prochauffeur/SettingsSectionRedirect";
 
 export default function SettingsCountryPage() {
-  return <SettingsSectionRedirect sectionId="country" />;
+  return <SettingsSectionRedirect sectionId="locale" />;
 }

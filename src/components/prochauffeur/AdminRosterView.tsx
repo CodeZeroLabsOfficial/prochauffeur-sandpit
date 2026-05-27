@@ -116,7 +116,7 @@ export default function AdminRosterView() {
             ? displayNameForUser(selectedAdmin, selectedAdmin.id)
             : "Administrator"
         }
-        className="max-w-2xl p-5 lg:p-10"
+        size="md"
       >
         {selectedAdminId ? (
           <AdminAccountDetails userId={selectedAdminId} />

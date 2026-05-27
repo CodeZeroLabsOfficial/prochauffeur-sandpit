@@ -4,7 +4,6 @@ import CompanySettingsSection from "@/components/company-profile/CompanySettings
 import SettingsEditableCard from "@/components/company-profile/SettingsEditableCard";
 import AdminActionBanner from "@/components/prochauffeur/AdminActionBanner";
 import OperatingHoursPatternModal from "@/components/prochauffeur/OperatingHoursPatternModal";
-import FormModal from "@/components/prochauffeur/FormModal";
 import Button from "@/components/ui/button/Button";
 import { useAdminOperations } from "@/context/AdminOperationsContext";
 import { useModal } from "@/hooks/useModal";
@@ -189,26 +188,21 @@ export default function OperatingHoursView() {
         )}
       </CompanySettingsSection>
 
-      <FormModal
+      <OperatingHoursPatternModal
+        key={formKey}
         isOpen={isOpen}
         onClose={closePatternModal}
         title={editingScheduleId ? "Edit pattern" : "Add pattern"}
-        className="max-w-2xl p-5 lg:p-10"
-      >
-        <OperatingHoursPatternModal
-          key={formKey}
-          schedule={editingSchedule}
-          weekStartsOn={operatingHours.weekStartsOn}
-          isSaving={isSaving}
-          actionError={actionError}
-          clearActionError={clearActionError}
-          onSave={handleSavePattern}
-          onDelete={
-            editingScheduleId == null ? undefined : handleDeletePattern
-          }
-          onCancel={closePatternModal}
-        />
-      </FormModal>
+        schedule={editingSchedule}
+        weekStartsOn={operatingHours.weekStartsOn}
+        isSaving={isSaving}
+        actionError={actionError}
+        clearActionError={clearActionError}
+        onSave={handleSavePattern}
+        onDelete={
+          editingScheduleId == null ? undefined : handleDeletePattern
+        }
+      />
     </>
   );
 }

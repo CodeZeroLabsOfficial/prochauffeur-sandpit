@@ -1,15 +1,8 @@
 "use client";
 
-import Button from "@/components/ui/button/Button";
 import React from "react";
 
-type AddBookingNoticeContentProps = {
-  onClose?: () => void;
-};
-
-export default function AddBookingNoticeContent({
-  onClose,
-}: AddBookingNoticeContentProps) {
+export default function AddBookingNoticeContent() {
   return (
     <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
       <p>
@@ -21,13 +14,6 @@ export default function AddBookingNoticeContent({
         Manual booking creation from the admin dashboard is not available yet.
         Once that flow is wired up, it will open here as a form modal.
       </p>
-      {onClose ? (
-        <div className="flex justify-end pt-3">
-          <Button size="sm" variant="outline" onClick={onClose}>
-            Close
-          </Button>
-        </div>
-      ) : null}
     </div>
   );
 }

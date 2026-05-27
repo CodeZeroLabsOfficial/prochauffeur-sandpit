@@ -4,7 +4,6 @@ import CompanySettingsSection from "@/components/company-profile/CompanySettings
 import SettingsEditableCard from "@/components/company-profile/SettingsEditableCard";
 import AdminActionBanner from "@/components/prochauffeur/AdminActionBanner";
 import Button from "@/components/ui/button/Button";
-import FormModal from "@/components/prochauffeur/FormModal";
 import LocationFormView from "@/components/prochauffeur/LocationFormView";
 import { useCompanySettingsScroll } from "@/context/CompanySettingsScrollContext";
 import { useAdminOperations } from "@/context/AdminOperationsContext";
@@ -118,20 +117,14 @@ export default function LocationsView() {
         )}
       </CompanySettingsSection>
 
-      <FormModal
+      <LocationFormView
+        key={formKey}
         isOpen={isOpen}
-        onClose={closeLocationModal}
-        title={editingLocationId ? "Edit location" : "Add location"}
-        className="max-w-2xl p-5 lg:p-10"
-      >
-        <LocationFormView
-          key={formKey}
-          locationId={editingLocationId}
-          variant="modal"
-          onSuccess={closeLocationModal}
-          onCancel={closeLocationModal}
-        />
-      </FormModal>
+        locationId={editingLocationId}
+        variant="modal"
+        onSuccess={closeLocationModal}
+        onCancel={closeLocationModal}
+      />
     </>
   );
 }
