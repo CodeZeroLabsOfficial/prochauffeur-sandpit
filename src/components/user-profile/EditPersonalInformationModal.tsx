@@ -11,20 +11,21 @@ import { useAuth } from "@/context/AuthContext";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
+import { ensureFirebaseInitialized, getFirebaseAuth } from "@/lib/firebase/client";
+import { updateUserProfileAndEmail } from "@/lib/prochauffeur/firestore";
+import { updateEmail } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 
 type EditPersonalInformationModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSave?: () => void;
 };
 
 export default function EditPersonalInformationModal({
   isOpen,
   onClose,
-  onSave,
 }: EditPersonalInformationModalProps) {
-  const { appUser } = useAuth();
+  const { appUser, refreshAppUser } = useAuth();
 
   const displayName =
     appUser?.profile.displayName.trim() || appUser?.email || "Administrator";
@@ -37,6 +38,8 @@ export default function EditPersonalInformationModal({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [bio, setBio] = useState("Fleet Administrator");
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -46,11 +49,58 @@ export default function EditPersonalInformationModal({
     setEmail(appUser?.email ?? "");
     setPhone(appUser?.profile.phoneNumber?.trim() ?? "");
     setBio("Fleet Administrator");
+    setSaveError(null);
   }, [isOpen, appUser, initialFirst, initialLast]);
 
-  function handleSave() {
-    onSave?.();
-    onClose();
+  async function handleSave() {
+    if (!appUser) return;
+
+    const nextEmail = email.trim();
+    if (!nextEmail) {
+      setSaveError("Email address is required.");
+      return;
+    }
+
+    const nextDisplayName = `${firstName.trim()} ${lastName.trim()}`.trim();
+    if (!nextDisplayName) {
+      setSaveError("Enter at least a first name or last name.");
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      await ensureFirebaseInitialized();
+      const auth = getFirebaseAuth();
+      const currentUser = auth.currentUser;
+      const currentEmail = currentUser?.email?.trim() ?? "";
+
+      if (currentUser && nextEmail !== currentEmail) {
+        await updateEmail(currentUser, nextEmail);
+      }
+
+      await updateUserProfileAndEmail(
+        appUser.id,
+        {
+          ...appUser.profile,
+          displayName: nextDisplayName,
+          phoneNumber: phone.trim() || null,
+          photoURL: photoURL.trim() || null,
+        },
+        nextEmail
+      );
+
+      await refreshAppUser();
+      onClose();
+    } catch (error) {
+      setSaveError(
+        error instanceof Error
+          ? error.message
+          : "Could not save your profile details."
+      );
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -64,8 +114,8 @@ export default function EditPersonalInformationModal({
           <Button size="sm" variant="outline" type="button" onClick={onClose}>
             Cancel
           </Button>
-          <Button size="sm" onClick={handleSave}>
-            Save changes
+          <Button size="sm" onClick={() => void handleSave()} disabled={isSaving}>
+            {isSaving ? "Saving..." : "Save changes"}
           </Button>
         </ModalFormFooterActions>
       }
@@ -73,10 +123,13 @@ export default function EditPersonalInformationModal({
       <ModalFormDescription>
         Update your details to keep your profile up-to-date.
       </ModalFormDescription>
+      {saveError ? (
+        <p className="mb-4 text-sm text-error-500">{saveError}</p>
+      ) : null}
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          handleSave();
+          void handleSave();
         }}
       >
         <ProfilePicturePicker

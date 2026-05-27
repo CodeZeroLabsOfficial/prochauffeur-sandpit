@@ -31,37 +31,46 @@ export default function UserAddressCard() {
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
               <div>
                 <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                  Street
+                </p>
+                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                  123 Fleet Street
+                </p>
+              </div>
+
+              <div>
+                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                  City
+                </p>
+                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                  Phoenix
+                </p>
+              </div>
+
+              <div>
+                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                  State
+                </p>
+                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                  Arizona
+                </p>
+              </div>
+
+              <div>
+                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                  Postcode
+                </p>
+                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                  85001
+                </p>
+              </div>
+
+              <div>
+                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                   Country
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                   United States
-                </p>
-              </div>
-
-              <div>
-                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  City/State
-                </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  Phoenix, Arizona, United States.
-                </p>
-              </div>
-
-              <div>
-                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  Postal Code
-                </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  ERT 2489
-                </p>
-              </div>
-
-              <div>
-                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  TAX ID
-                </p>
-                <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  AS4568384
                 </p>
               </div>
             </div>
@@ -93,23 +102,28 @@ export default function UserAddressCard() {
         </ModalFormDescription>
         <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
           <div>
+            <Label>Street</Label>
+            <Input type="text" defaultValue="123 Fleet Street" />
+          </div>
+
+          <div>
+            <Label>City</Label>
+            <Input type="text" defaultValue="Phoenix" />
+          </div>
+
+          <div>
+            <Label>State</Label>
+            <Input type="text" defaultValue="Arizona" />
+          </div>
+
+          <div>
+            <Label>Postcode</Label>
+            <Input type="text" defaultValue="85001" />
+          </div>
+
+          <div>
             <Label>Country</Label>
             <Input type="text" defaultValue="United States" />
-          </div>
-
-          <div>
-            <Label>City/State</Label>
-            <Input type="text" defaultValue="Arizona, United States." />
-          </div>
-
-          <div>
-            <Label>Postal Code</Label>
-            <Input type="text" defaultValue="ERT 2489" />
-          </div>
-
-          <div>
-            <Label>TAX ID</Label>
-            <Input type="text" defaultValue="AS4568384" />
           </div>
         </div>
       </FormModal>

@@ -368,6 +368,17 @@ export async function updateUserProfile(
   });
 }
 
+export async function updateUserProfileAndEmail(
+  uid: string,
+  profile: UserProfile,
+  email: string
+): Promise<void> {
+  await updateDoc(doc(getFirestoreDb(), USERS, uid), {
+    profile: encodeUserProfile(profile),
+    email: email.trim(),
+  });
+}
+
 export async function updateUserDriverProfile(
   uid: string,
   driverProfile: DriverProfile

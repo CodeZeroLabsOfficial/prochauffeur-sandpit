@@ -32,6 +32,7 @@ type AuthState = {
 type AuthContextValue = AuthState & {
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  refreshAppUser: () => Promise<void>;
   clearError: () => void;
 };
 
@@ -137,6 +138,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setError(null);
   }, []);
 
+  const refreshAppUser = useCallback(async () => {
+    await ensureFirebaseInitialized();
+    const currentUser = getFirebaseAuth().currentUser;
+    if (!currentUser) {
+      setAppUser(null);
+      return;
+    }
+    const profile = await fetchUserProfile(currentUser.uid);
+    setAppUser(profile);
+  }, []);
+
   const clearError = useCallback(() => setError(null), []);
 
   const value = useMemo<AuthContextValue>(
@@ -148,9 +160,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       error,
       signIn,
       signOut,
+      refreshAppUser,
       clearError,
     }),
-    [appUser, clearError, error, firebaseUser, loading, signIn, signOut]
+    [
+      appUser,
+      clearError,
+      error,
+      firebaseUser,
+      loading,
+      refreshAppUser,
+      signIn,
+      signOut,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
