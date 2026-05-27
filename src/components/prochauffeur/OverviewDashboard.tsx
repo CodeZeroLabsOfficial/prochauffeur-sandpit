@@ -4,7 +4,6 @@ import BookingCard from "@/components/prochauffeur/BookingCard";
 import MetricCard from "@/components/prochauffeur/MetricCard";
 import TripVolumeChart from "@/components/prochauffeur/TripVolumeChart";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
-import { GroupIcon } from "@/icons";
 import Link from "next/link";
 import React from "react";
 
@@ -28,48 +27,27 @@ export default function OverviewDashboard() {
       ) : null}
 
       <div className="grid grid-cols-12 gap-4 md:gap-6">
-        <div className="col-span-12">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
-            <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] sm:col-span-2">
-              <div className="grid grid-cols-2 divide-x divide-gray-200 dark:divide-gray-800">
-                <div className="px-6 py-8 text-center">
-                  <p className="text-3xl font-bold text-gray-800 dark:text-white/90">
-                    {vm.tripsBookedToday}
-                  </p>
-                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    Trips booked today
-                  </p>
-                </div>
-                <div className="px-6 py-8 text-center">
-                  <p className="text-3xl font-bold text-gray-800 dark:text-white/90">
-                    {vm.activeTripsInWindow}
-                  </p>
-                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    Active now
-                  </p>
-                </div>
-              </div>
-            </div>
-            <MetricCard
-              title="Customers"
-              value={vm.customerAccounts}
-              icon={<GroupIcon className="size-6" />}
-            />
-            <MetricCard
-              title="Chauffeurs"
-              value={vm.chauffeurAccounts}
-              icon={
-                <svg
-                  className="size-6"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  aria-hidden
-                >
-                  <path d="M12 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-7 9a2 2 0 0 0-2 2v1.09c0 .55.22 1.07.62 1.45l1.38 1.32V20a1 1 0 0 0 1 1h2v-4.14l-2-1.9V13a4 4 0 1 1 8 0v1.96l-2 1.9V20h2a1 1 0 0 0 1-1v-3.14l1.38-1.32c.4-.38.62-.9.62-1.45V13a2 2 0 0 0-2-2H5Z" />
-                </svg>
-              }
-            />
-          </div>
+        <div className="col-span-12 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <MetricCard
+            title="Trips booked today"
+            value={vm.tripsBookedToday}
+            icon={<StatIcon />}
+          />
+          <MetricCard
+            title="Active now"
+            value={vm.activeTripsInWindow}
+            icon={<StatIcon />}
+          />
+          <MetricCard
+            title="Customers"
+            value={vm.customerAccounts}
+            icon={<StatIcon />}
+          />
+          <MetricCard
+            title="Chauffeurs"
+            value={vm.chauffeurAccounts}
+            icon={<StatIcon />}
+          />
         </div>
 
         <div className="col-span-12 xl:col-span-7">
@@ -148,5 +126,13 @@ export default function OverviewDashboard() {
         </div>
       </div>
     </div>
+  );
+}
+
+function StatIcon() {
+  return (
+    <svg className="size-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M4 19h16v2H2V3h2v16Zm4-8h2v8H8v-8Zm4-4h2v12h-2V7Zm4 6h2v6h-2v-6Z" />
+    </svg>
   );
 }
