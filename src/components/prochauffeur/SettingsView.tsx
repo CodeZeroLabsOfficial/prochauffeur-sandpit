@@ -1,7 +1,8 @@
 "use client";
 
-import CompanyPlaceholderView from "@/components/prochauffeur/CompanyPlaceholderView";
 import AdminRosterView from "@/components/prochauffeur/AdminRosterView";
+import BrandingSettingsView from "@/components/prochauffeur/BrandingSettingsView";
+import CompanyPlaceholderView from "@/components/prochauffeur/CompanyPlaceholderView";
 import LicenseManagementView from "@/components/prochauffeur/LicenseManagementView";
 import LocaleSettingsView from "@/components/prochauffeur/LocaleSettingsView";
 import React from "react";
@@ -9,6 +10,7 @@ import React from "react";
 export default function SettingsView() {
   return (
     <div className="space-y-6">
+      <BrandingSettingsView />
       <LocaleSettingsView />
       <LicenseManagementView />
       <AdminRosterView />

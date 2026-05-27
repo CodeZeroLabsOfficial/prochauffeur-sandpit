@@ -4,6 +4,7 @@ import {
   LockIcon,
   PageIcon,
   PlugInIcon,
+  ShootingStarIcon,
 } from "@/icons/index";
 
 export type SettingsNavItem = {
@@ -18,12 +19,18 @@ export type SettingsNavSection = {
   items: SettingsNavItem[];
 };
 
-export const defaultSettingsSectionId = "locale";
+export const defaultSettingsSectionId = "branding";
 
 export const settingsNavSections: SettingsNavSection[] = [
   {
     title: "Settings",
     items: [
+      {
+        name: "Branding",
+        sectionId: "branding",
+        href: "/settings#branding",
+        icon: <ShootingStarIcon />,
+      },
       {
         name: "Locale",
         sectionId: "locale",
