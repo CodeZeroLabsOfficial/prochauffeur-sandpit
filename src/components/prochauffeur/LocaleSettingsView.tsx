@@ -115,161 +115,153 @@ export default function LocaleSettingsView() {
       }
       className="max-w-3xl"
     >
-      <div className="space-y-6">
-        <div>
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-50/40 dark:border-gray-800 dark:bg-gray-900/30">
+        <div className="px-4 pb-3 pt-4 sm:px-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
             Preference
           </p>
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-gray-50/40 dark:border-gray-800 dark:bg-gray-900/30">
-            <div className="divide-y divide-gray-200 dark:divide-gray-800">
-              <LocaleSettingRow
-                title="Country"
-                description="Primary operating country for addresses and compliance defaults."
-              >
-                <Label className="sr-only" htmlFor="locale-country">
-                  Country
-                </Label>
-                <select
-                  id="locale-country"
-                  className={selectClassName}
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                >
-                  <option value="">Select country</option>
-                  {LOCALE_COUNTRY_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </LocaleSettingRow>
+        </div>
+        <div className="divide-y divide-gray-200 dark:divide-gray-800">
+          <LocaleSettingRow
+            title="Country"
+            description="Primary operating country for addresses and compliance defaults."
+          >
+            <Label className="sr-only" htmlFor="locale-country">
+              Country
+            </Label>
+            <select
+              id="locale-country"
+              className={selectClassName}
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+            >
+              <option value="">Select country</option>
+              {LOCALE_COUNTRY_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </LocaleSettingRow>
 
-              <LocaleSettingRow
-                title="Language"
-                description="Default language for admin and customer-facing copy."
-              >
-                <Label className="sr-only" htmlFor="locale-language">
-                  Language
-                </Label>
-                <select
-                  id="locale-language"
-                  className={selectClassName}
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                >
-                  <option value="">Select language</option>
-                  {LOCALE_LANGUAGE_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </LocaleSettingRow>
+          <LocaleSettingRow
+            title="Language"
+            description="Default language for admin and customer-facing copy."
+          >
+            <Label className="sr-only" htmlFor="locale-language">
+              Language
+            </Label>
+            <select
+              id="locale-language"
+              className={selectClassName}
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+            >
+              <option value="">Select language</option>
+              {LOCALE_LANGUAGE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </LocaleSettingRow>
 
-              <LocaleSettingRow
-                title="Timezone"
-                description="IANA time zone used for dispatch scheduling and weekly operating patterns."
-              >
-                <Label className="sr-only" htmlFor="locale-timezone">
-                  Timezone
-                </Label>
-                <select
-                  id="locale-timezone"
-                  className={selectClassName}
-                  value={timeZoneIdentifier}
-                  onChange={(e) => setTimeZoneIdentifier(e.target.value)}
-                >
-                  <option value="">Select timezone</option>
-                  {timeZoneOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </LocaleSettingRow>
-            </div>
-          </div>
+          <LocaleSettingRow
+            title="Timezone"
+            description="IANA time zone used for dispatch scheduling and weekly operating patterns."
+          >
+            <Label className="sr-only" htmlFor="locale-timezone">
+              Timezone
+            </Label>
+            <select
+              id="locale-timezone"
+              className={selectClassName}
+              value={timeZoneIdentifier}
+              onChange={(e) => setTimeZoneIdentifier(e.target.value)}
+            >
+              <option value="">Select timezone</option>
+              {timeZoneOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </LocaleSettingRow>
         </div>
 
-        <div>
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
+        <div className="border-t border-gray-200 px-4 pb-3 pt-4 dark:border-gray-800 sm:px-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
             Regional formats
           </p>
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-gray-50/40 dark:border-gray-800 dark:bg-gray-900/30">
-            <div className="divide-y divide-gray-200 dark:divide-gray-800">
-              <LocaleSettingRow
-                title="Date format"
-                description="How calendar dates appear across the dispatch console."
-              >
-                <Label className="sr-only" htmlFor="locale-date-format">
-                  Date format
-                </Label>
-                <select
-                  id="locale-date-format"
-                  className={selectClassName}
-                  value={dateFormat}
-                  onChange={(e) =>
-                    setDateFormat(e.target.value as LocaleDateFormat | "")
-                  }
-                >
-                  <option value="">Select date format</option>
-                  {LOCALE_DATE_FORMAT_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </LocaleSettingRow>
+        </div>
+        <div className="divide-y divide-gray-200 dark:divide-gray-800">
+          <LocaleSettingRow
+            title="Date format"
+            description="How calendar dates appear across the dispatch console."
+          >
+            <Label className="sr-only" htmlFor="locale-date-format">
+              Date format
+            </Label>
+            <select
+              id="locale-date-format"
+              className={selectClassName}
+              value={dateFormat}
+              onChange={(e) => setDateFormat(e.target.value as LocaleDateFormat | "")}
+            >
+              <option value="">Select date format</option>
+              {LOCALE_DATE_FORMAT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </LocaleSettingRow>
 
-              <LocaleSettingRow
-                title="Time format"
-                description="12-hour or 24-hour clock for trip and activity timestamps."
-              >
-                <Label className="sr-only" htmlFor="locale-time-format">
-                  Time format
-                </Label>
-                <select
-                  id="locale-time-format"
-                  className={selectClassName}
-                  value={timeFormat}
-                  onChange={(e) =>
-                    setTimeFormat(e.target.value as LocaleTimeFormat | "")
-                  }
-                >
-                  <option value="">Select time format</option>
-                  {LOCALE_TIME_FORMAT_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </LocaleSettingRow>
+          <LocaleSettingRow
+            title="Time format"
+            description="12-hour or 24-hour clock for trip and activity timestamps."
+          >
+            <Label className="sr-only" htmlFor="locale-time-format">
+              Time format
+            </Label>
+            <select
+              id="locale-time-format"
+              className={selectClassName}
+              value={timeFormat}
+              onChange={(e) => setTimeFormat(e.target.value as LocaleTimeFormat | "")}
+            >
+              <option value="">Select time format</option>
+              {LOCALE_TIME_FORMAT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </LocaleSettingRow>
 
-              <LocaleSettingRow
-                title="Number format"
-                description="Thousands separators and decimal style for fares and reports."
-              >
-                <Label className="sr-only" htmlFor="locale-number-format">
-                  Number format
-                </Label>
-                <select
-                  id="locale-number-format"
-                  className={selectClassName}
-                  value={numberFormat}
-                  onChange={(e) =>
-                    setNumberFormat(e.target.value as LocaleNumberFormat | "")
-                  }
-                >
-                  <option value="">Select number format</option>
-                  {LOCALE_NUMBER_FORMAT_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </LocaleSettingRow>
-            </div>
-          </div>
+          <LocaleSettingRow
+            title="Number format"
+            description="Thousands separators and decimal style for fares and reports."
+          >
+            <Label className="sr-only" htmlFor="locale-number-format">
+              Number format
+            </Label>
+            <select
+              id="locale-number-format"
+              className={selectClassName}
+              value={numberFormat}
+              onChange={(e) =>
+                setNumberFormat(e.target.value as LocaleNumberFormat | "")
+              }
+            >
+              <option value="">Select number format</option>
+              {LOCALE_NUMBER_FORMAT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </LocaleSettingRow>
         </div>
       </div>
 

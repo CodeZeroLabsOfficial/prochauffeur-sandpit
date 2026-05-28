@@ -85,25 +85,23 @@ export default function LicenseManagementView() {
         </div>
 
         <div className="border-t border-gray-200 px-4 py-4 dark:border-gray-800 sm:px-5 lg:px-6">
-          <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900/60 sm:p-5">
-            <p className="text-sm font-semibold text-gray-800 dark:text-white/90">
-              License limits
-            </p>
-            <div className="mt-3 space-y-4">
-              <UsageRow title="Admin accounts" current={admins} cap={limits.maxAdmins} />
-              <UsageRow title="Drivers" current={drivers} cap={limits.maxDrivers} />
-              <UsageRow
-                title="Dispatch locations"
-                current={locations.length}
-                cap={limits.maxLocations}
-              />
-            </div>
-            <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
-              Caps: admins {capLabel(limits.maxAdmins)}, drivers{" "}
-              {capLabel(limits.maxDrivers)}, locations{" "}
-              {capLabel(limits.maxLocations)}.
-            </p>
+          <p className="text-sm font-semibold text-gray-800 dark:text-white/90">
+            License limits
+          </p>
+          <div className="mt-3 space-y-4">
+            <UsageRow title="Admin accounts" current={admins} cap={limits.maxAdmins} />
+            <UsageRow title="Drivers" current={drivers} cap={limits.maxDrivers} />
+            <UsageRow
+              title="Dispatch locations"
+              current={locations.length}
+              cap={limits.maxLocations}
+            />
           </div>
+          <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+            Caps: admins {capLabel(limits.maxAdmins)}, drivers{" "}
+            {capLabel(limits.maxDrivers)}, locations{" "}
+            {capLabel(limits.maxLocations)}.
+          </p>
         </div>
       </div>
     </CompanySettingsSection>
