@@ -24,16 +24,18 @@ const selectClassName =
 
 type LocaleSettingRowProps = {
   title: string;
-  description: string;
+  description?: string;
   children: React.ReactNode;
 };
 
 function LocaleSettingRow({ title, description, children }: LocaleSettingRowProps) {
   return (
-    <div className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
+    <div className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <div className="min-w-0">
         <p className="text-sm font-medium text-gray-800 dark:text-white/90">{title}</p>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{description}</p>
+        {description ? (
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{description}</p>
+        ) : null}
       </div>
       <div className="w-full sm:w-auto sm:min-w-[240px]">{children}</div>
     </div>
@@ -112,10 +114,9 @@ export default function LocaleSettingsView() {
           />
         ) : null
       }
-      className="max-w-3xl"
     >
       <div className="overflow-hidden">
-        <div className="px-4 pb-3 pt-4 sm:px-5">
+        <div className="pb-3 pt-4">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
             Preference
           </p>
@@ -123,7 +124,6 @@ export default function LocaleSettingsView() {
         <div className="divide-y divide-gray-200 dark:divide-gray-800">
           <LocaleSettingRow
             title="Country"
-            description="Primary operating country for addresses and compliance defaults."
           >
             <Label className="sr-only" htmlFor="locale-country">
               Country
@@ -145,7 +145,6 @@ export default function LocaleSettingsView() {
 
           <LocaleSettingRow
             title="Language"
-            description="Default language for admin and customer-facing copy."
           >
             <Label className="sr-only" htmlFor="locale-language">
               Language
@@ -167,7 +166,6 @@ export default function LocaleSettingsView() {
 
           <LocaleSettingRow
             title="Timezone"
-            description="IANA time zone used for dispatch scheduling and weekly operating patterns."
           >
             <Label className="sr-only" htmlFor="locale-timezone">
               Timezone
@@ -188,7 +186,7 @@ export default function LocaleSettingsView() {
           </LocaleSettingRow>
         </div>
 
-        <div className="border-t border-gray-200 px-4 pb-3 pt-4 dark:border-gray-800 sm:px-5">
+        <div className="border-t border-gray-200 pb-3 pt-4 dark:border-gray-800">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
             Regional formats
           </p>
@@ -196,7 +194,6 @@ export default function LocaleSettingsView() {
         <div className="divide-y divide-gray-200 dark:divide-gray-800">
           <LocaleSettingRow
             title="Date format"
-            description="How calendar dates appear across the dispatch console."
           >
             <Label className="sr-only" htmlFor="locale-date-format">
               Date format
@@ -218,7 +215,6 @@ export default function LocaleSettingsView() {
 
           <LocaleSettingRow
             title="Time format"
-            description="12-hour or 24-hour clock for trip and activity timestamps."
           >
             <Label className="sr-only" htmlFor="locale-time-format">
               Time format
@@ -240,7 +236,6 @@ export default function LocaleSettingsView() {
 
           <LocaleSettingRow
             title="Number format"
-            description="Thousands separators and decimal style for fares and reports."
           >
             <Label className="sr-only" htmlFor="locale-number-format">
               Number format

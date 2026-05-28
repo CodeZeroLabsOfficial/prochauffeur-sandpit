@@ -65,7 +65,7 @@ export default function LicenseManagementView() {
       title=""
     >
       <div className="overflow-hidden">
-        <div className="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between lg:px-6">
+        <div className="flex flex-col gap-4 pb-5 pt-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-base font-semibold text-gray-800 dark:text-white/90">
               You&apos;re on {tier} plan
@@ -79,7 +79,7 @@ export default function LicenseManagementView() {
           </Button>
         </div>
 
-        <div className="border-t border-gray-200 px-4 py-4 dark:border-gray-800 sm:px-5 lg:px-6">
+        <div className="border-t border-gray-200 py-4 dark:border-gray-800">
           <p className="text-sm font-semibold text-gray-800 dark:text-white/90">
             License limits
           </p>
