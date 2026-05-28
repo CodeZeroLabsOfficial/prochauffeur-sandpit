@@ -1,6 +1,9 @@
 "use client";
 
-import type { BrandingAssetPreview } from "@/lib/prochauffeur/brandingAssets";
+import {
+  isLegacyStaticBrandingPath,
+  type BrandingAssetPreview,
+} from "@/lib/prochauffeur/brandingAssets";
 import Image from "next/image";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
@@ -102,7 +105,7 @@ export default function BrandingAssetField({
     <div
       className={`flex shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900 ${previewBoxClass}`}
     >
-      {value.trim() ? (
+      {value.trim() && !isLegacyStaticBrandingPath(value) ? (
         <Image
           src={value}
           alt={label}

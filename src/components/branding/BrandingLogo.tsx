@@ -4,6 +4,7 @@ import {
   isBrandingDataUrl,
   useFleetBranding,
 } from "@/context/FleetBrandingContext";
+import { isLegacyStaticBrandingPath } from "@/lib/prochauffeur/brandingAssets";
 import type { AppFleetBrandingSettings } from "@/lib/prochauffeur/types";
 import Image, { type ImageProps } from "next/image";
 
@@ -21,13 +22,21 @@ export default function BrandingLogo({
   ...props
 }: BrandingLogoProps) {
   const { branding } = useFleetBranding();
-  const src = branding[asset];
+  const src = branding[asset].trim();
+
+  if (!src || isLegacyStaticBrandingPath(src)) {
+    return null;
+  }
+
+  const useUnoptimized =
+    unoptimized ??
+    (isBrandingDataUrl(src) || src.includes("firebasestorage.googleapis.com"));
 
   return (
     <Image
       src={src}
       alt={alt}
-      unoptimized={unoptimized ?? isBrandingDataUrl(src)}
+      unoptimized={useUnoptimized}
       {...props}
     />
   );

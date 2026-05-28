@@ -1,7 +1,10 @@
 "use client";
 
 import { ensureFirebaseInitialized } from "@/lib/firebase/client";
-import { mergeFleetBrandingSettings } from "@/lib/prochauffeur/brandingAssets";
+import {
+  isLegacyStaticBrandingPath,
+  mergeFleetBrandingSettings,
+} from "@/lib/prochauffeur/brandingAssets";
 import { listenFleetBranding } from "@/lib/prochauffeur/firestore";
 import type { AppFleetBrandingSettings } from "@/lib/prochauffeur/types";
 import React, {
@@ -23,6 +26,8 @@ const FleetBrandingContext = createContext<FleetBrandingContextValue | null>(
 
 function FleetBrandingFavicon({ href }: { href: string }) {
   useEffect(() => {
+    if (!href.trim() || isLegacyStaticBrandingPath(href)) return;
+
     let link = document.querySelector<HTMLLinkElement>("link[rel='icon']");
     if (!link) {
       link = document.createElement("link");

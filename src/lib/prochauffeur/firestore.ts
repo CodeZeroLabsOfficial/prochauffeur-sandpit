@@ -580,7 +580,11 @@ export async function saveFleetOperatingHours(
 export async function saveFleetBranding(
   branding: AppFleetBrandingSettings
 ): Promise<void> {
-  await setDoc(operatorDoc(OPERATOR_BRANDING_DOC), encodeFleetBranding(branding));
+  const sanitized = mergeFleetBrandingSettings(branding);
+  await setDoc(
+    operatorDoc(OPERATOR_BRANDING_DOC),
+    encodeFleetBranding(sanitized)
+  );
 }
 
 export async function saveFleetLocale(

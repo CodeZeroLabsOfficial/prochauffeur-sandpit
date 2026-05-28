@@ -1,4 +1,7 @@
-import type { AppFleetBrandingSettings } from "@/lib/prochauffeur/types";
+import {
+  EMPTY_FLEET_BRANDING,
+  type AppFleetBrandingSettings,
+} from "@/lib/prochauffeur/types";
 
 export type BrandingAssetKey = keyof AppFleetBrandingSettings;
 
@@ -27,13 +30,18 @@ export const BRANDING_ASSET_KEYS: BrandingAssetKey[] = [
   "authLogo",
 ];
 
-export const DEFAULT_BRANDING_ASSETS: AppFleetBrandingSettings = {
-  favicon: "/branding/logo-icon.svg",
-  logo: "/branding/logo.svg",
-  logoDark: "/branding/logo-dark.svg",
-  logoIcon: "/branding/logo-icon.svg",
-  authLogo: "/branding/auth-logo.svg",
-};
+/** Bundled paths under public/branding or public/images/logo (removed from the app). */
+export function isLegacyStaticBrandingPath(value: string): boolean {
+  const path = value.trim();
+  if (!path || path.startsWith("data:") || /^https?:\/\//i.test(path)) {
+    return false;
+  }
+
+  const normalized = path.replace(/^\.\//, "").replace(/^\//, "");
+  return (
+    normalized.startsWith("branding/") || normalized.startsWith("images/logo/")
+  );
+}
 
 export const BRANDING_SECTIONS: BrandingSectionDefinition[] = [
   {
@@ -83,19 +91,16 @@ export const BRANDING_SECTIONS: BrandingSectionDefinition[] = [
   },
 ];
 
-function normalizeLegacyBrandingPath(value: string): string {
-  return value.replace(/^\/images\/logo\//, "/branding/");
-}
-
 export function mergeFleetBrandingSettings(
   stored: Partial<AppFleetBrandingSettings> | null | undefined
 ): AppFleetBrandingSettings {
-  const merged = { ...DEFAULT_BRANDING_ASSETS };
+  const merged: AppFleetBrandingSettings = { ...EMPTY_FLEET_BRANDING };
   if (!stored) return merged;
 
   for (const key of BRANDING_ASSET_KEYS) {
     const value = stored[key]?.trim();
-    if (value) merged[key] = normalizeLegacyBrandingPath(value);
+    if (!value || isLegacyStaticBrandingPath(value)) continue;
+    merged[key] = value;
   }
 
   return merged;
