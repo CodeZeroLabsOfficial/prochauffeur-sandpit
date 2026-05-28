@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import React, { useState } from "react";
@@ -16,6 +17,8 @@ export default function UserDropdown() {
     appUser?.profile.displayName.trim() ||
     appUser?.email ||
     "Administrator";
+  const photoURL = appUser?.profile.photoURL?.trim();
+  const avatarInitial = displayName.charAt(0).toUpperCase();
 
   const editProfileHref = "/profile";
   const accountSettingsHref = appUser?.id
@@ -43,8 +46,19 @@ export default function UserDropdown() {
         onClick={toggleDropdown}
         className="dropdown-toggle flex items-center text-gray-700 dark:text-gray-400"
       >
-        <span className="mr-3 flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-brand-500 text-sm font-semibold text-white">
-          {displayName.charAt(0).toUpperCase()}
+        <span className="mr-3 flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-brand-500 text-sm font-semibold text-white dark:border-gray-800">
+          {photoURL ? (
+            <Image
+              width={44}
+              height={44}
+              src={photoURL}
+              alt={displayName}
+              className="h-full w-full object-cover"
+              unoptimized
+            />
+          ) : (
+            avatarInitial
+          )}
         </span>
         <span className="mr-1 block font-medium text-theme-sm">{displayName}</span>
         <svg
