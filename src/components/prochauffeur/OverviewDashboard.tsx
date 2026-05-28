@@ -1,6 +1,6 @@
 "use client";
 
-import BookingCard from "@/components/prochauffeur/BookingCard";
+import UpcomingTripPreviewCard from "@/components/prochauffeur/UpcomingTripPreviewCard";
 import MetricCard from "@/components/prochauffeur/MetricCard";
 import TripVolumeChart from "@/components/prochauffeur/TripVolumeChart";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
@@ -76,15 +76,13 @@ export default function OverviewDashboard() {
                 No live trips in the loaded window.
               </p>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {vm.upcomingTripPreview.map((trip) => (
-                  <BookingCard
+                  <UpcomingTripPreviewCard
                     key={trip.id}
                     trip={trip}
-                    chauffeurHeadline={vm.chauffeurName(trip.driverID)}
-                    customerCaption={`Customer: ${vm.customerName(trip)}`}
-                    isMutating={vm.bookingMutationTripID === trip.id}
-                    showActions={false}
+                    name={vm.chauffeurName(trip.driverID)}
+                    customerName={vm.customerName(trip)}
                   />
                 ))}
               </div>

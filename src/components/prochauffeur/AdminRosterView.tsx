@@ -64,11 +64,6 @@ export default function AdminRosterView() {
         title="Administrators"
         description={`${admins.length}/${capLabel(limits.maxAdmins)} admin seats used`}
       >
-        <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-          Administrator accounts are provisioned via Firebase Auth. Use the iOS
-          app or Firebase Console to invite new admins, then manage roles here.
-        </p>
-
         {!hasReceivedOperationsSnapshot ? (
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Loading administrators…
