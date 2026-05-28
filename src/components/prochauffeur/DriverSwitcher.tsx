@@ -46,7 +46,7 @@ function DriverAvatar({ user }: { user: AppUser }) {
   const initial = displayNameForUser(user, user.id).charAt(0).toUpperCase();
   return (
     <span
-      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white ${avatarColorClass(user.id)}`}
+      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white ${avatarColorClass(user.id)}`}
     >
       {initial}
     </span>
@@ -115,20 +115,20 @@ export default function DriverSwitcher({
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className="dropdown-toggle flex w-full items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3 text-left transition hover:border-gray-300 dark:border-gray-800 dark:bg-white/[0.03] dark:hover:border-gray-700"
+        className="dropdown-toggle flex w-full items-start gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3 text-left transition hover:border-gray-300 dark:border-gray-800 dark:bg-white/[0.03] dark:hover:border-gray-700"
       >
         {currentDriver ? (
           <DriverAvatar user={currentDriver} />
         ) : (
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-600 dark:bg-gray-800 dark:text-gray-400">
             ?
           </span>
         )}
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-semibold text-gray-800 dark:text-white/90">
+        <span className="min-w-0 flex-1 pr-1">
+          <span className="block break-words text-sm font-semibold leading-5 text-gray-800 dark:text-white/90">
             {triggerName}
           </span>
-          <span className="block truncate text-xs text-gray-500 dark:text-gray-400">
+          <span className="mt-0.5 block break-words text-xs leading-4 text-gray-500 dark:text-gray-400">
             {triggerSubtitle}
           </span>
         </span>
@@ -141,7 +141,7 @@ export default function DriverSwitcher({
       <Dropdown
         isOpen={isOpen}
         onClose={closeDropdown}
-        className="left-0 right-auto mt-2 w-full overflow-hidden p-0 py-2"
+        className="left-0 right-auto mt-2 w-[min(26rem,calc(100vw-2rem))] overflow-hidden p-0 py-2"
       >
         <div className="max-h-[min(20rem,50vh)] overflow-y-auto px-2">
           {drivers.length === 0 ? (
@@ -157,18 +157,18 @@ export default function DriverSwitcher({
                     <button
                       type="button"
                       onClick={() => selectDriver(driver.id)}
-                      className={`flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left transition ${
+                      className={`flex w-full items-start gap-3 rounded-lg px-2 py-3 text-left transition ${
                         isSelected
                           ? "bg-gray-100 dark:bg-white/5"
                           : "hover:bg-gray-50 dark:hover:bg-white/[0.03]"
                       }`}
                     >
                       <DriverAvatar user={driver} />
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-medium text-gray-800 dark:text-white/90">
+                      <span className="min-w-0 flex-1 pr-1">
+                        <span className="block break-words text-sm font-medium leading-5 text-gray-800 dark:text-white/90">
                           {displayNameForUser(driver, driver.id)}
                         </span>
-                        <span className="block truncate text-xs text-gray-500 dark:text-gray-400">
+                        <span className="mt-0.5 block break-words text-xs leading-4 text-gray-500 dark:text-gray-400">
                           {categoryLabel(driver)}
                         </span>
                       </span>

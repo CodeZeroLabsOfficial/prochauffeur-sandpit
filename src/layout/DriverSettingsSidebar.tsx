@@ -24,7 +24,7 @@ export default function DriverSettingsSidebar({
 
   return (
     <aside
-      className={`flex w-full shrink-0 flex-col border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 lg:w-[290px] lg:border-r ${className}`}
+      className={`flex w-full shrink-0 flex-col border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 lg:w-[320px] lg:border-r ${className}`}
     >
       <div className="border-b border-gray-200 px-5 py-5 dark:border-gray-800">
         <DriverSwitcher userId={userId} onNavigate={onNavigate} />
