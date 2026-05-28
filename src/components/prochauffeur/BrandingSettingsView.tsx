@@ -65,7 +65,7 @@ export default function BrandingSettingsView() {
         ) : null
       }
     >
-      <div className="divide-y divide-gray-200 dark:divide-gray-800">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {brandingAssets.map((asset) => (
           <BrandingAssetField
             key={asset.key}

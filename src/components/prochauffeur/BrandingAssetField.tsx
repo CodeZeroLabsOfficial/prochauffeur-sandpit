@@ -90,36 +90,39 @@ export default function BrandingAssetField({
   });
 
   const hasPreview = value.trim() && !isLegacyStaticBrandingPath(value);
-  const previewSizeClass =
-    preview === "compact" ? "h-10 w-10" : "h-10 min-w-[72px] max-w-[120px] px-2";
+  const previewBoxClass =
+    preview === "compact"
+      ? "h-12 w-12"
+      : "h-12 min-w-[80px] max-w-[160px] px-2";
 
   return (
-    <div className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-      <div className="flex min-w-0 flex-col gap-2">
-        <p className="text-sm font-medium text-gray-800 dark:text-white/90">{label}</p>
-        <div
-          className={`flex shrink-0 items-center justify-center overflow-hidden rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900 ${previewSizeClass}`}
-        >
-          {hasPreview ? (
-            <Image
-              src={value}
-              alt={label}
-              width={preview === "compact" ? 40 : 120}
-              height={40}
-              className={
-                preview === "compact"
-                  ? "h-full w-full object-contain p-1"
-                  : "max-h-8 w-auto object-contain"
-              }
-              unoptimized={shouldUnoptimizePreview(value)}
-            />
-          ) : (
-            <span className="text-[10px] text-gray-400 dark:text-gray-500">—</span>
-          )}
-        </div>
+    <div className="flex h-full flex-col rounded-2xl border border-gray-200 bg-gray-50/60 p-4 dark:border-gray-800 dark:bg-gray-900/30 sm:p-5">
+      <div
+        className={`mb-4 flex shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 ${previewBoxClass}`}
+      >
+        {hasPreview ? (
+          <Image
+            src={value}
+            alt={label}
+            width={preview === "compact" ? 48 : 160}
+            height={48}
+            className={
+              preview === "compact"
+                ? "h-full w-full object-contain p-1.5"
+                : "max-h-10 w-auto object-contain"
+            }
+            unoptimized={shouldUnoptimizePreview(value)}
+          />
+        ) : (
+          <span className="text-xs text-gray-400 dark:text-gray-500">No image</span>
+        )}
       </div>
 
-      <div className="shrink-0">
+      <h4 className="mb-auto text-sm font-semibold text-gray-800 dark:text-white/90">
+        {label}
+      </h4>
+
+      <div className="mt-4 flex items-center justify-end">
         <input {...getInputProps()} id={id} />
         <Button type="button" size="sm" variant="outline" onClick={open}>
           Upload
