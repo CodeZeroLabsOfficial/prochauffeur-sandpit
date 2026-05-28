@@ -15,6 +15,7 @@ import {
   ModalFormDescription,
   ModalFormFooterActions,
 } from "@/components/prochauffeur/modalShell";
+import Badge from "@/components/ui/badge/Badge";
 import Button from "@/components/ui/button/Button";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
 import { useAdminOperations } from "@/context/AdminOperationsContext";
@@ -73,9 +74,10 @@ export default function DriverDetailsCard({ userId }: DriverDetailsCardProps) {
   }
 
   const name = displayNameForUser(driver, driver.id);
-  const subtitle = [driver.email, driver.profile.phoneNumber?.trim()]
-    .filter(Boolean)
-    .join(" · ");
+  const roleLabel =
+    CHAUFFEUR_CATEGORY_LABELS[
+      driverProfile.chauffeurCategory as ChauffeurCategory
+    ] ?? driverProfile.chauffeurCategory;
 
   async function handleSave() {
     if (!driver) return;
@@ -122,9 +124,11 @@ export default function DriverDetailsCard({ userId }: DriverDetailsCardProps) {
               <h4 className="mb-2 text-center text-lg font-semibold text-gray-800 dark:text-white/90 xl:text-left">
                 {name}
               </h4>
-              <p className="text-center text-sm text-gray-500 dark:text-gray-400 xl:text-left">
-                {subtitle || "Add driver contact details"}
-              </p>
+              <div className="text-center xl:text-left">
+                <Badge variant="light" color="primary">
+                  {roleLabel}
+                </Badge>
+              </div>
             </div>
           </div>
         </div>
@@ -160,24 +164,6 @@ export default function DriverDetailsCard({ userId }: DriverDetailsCardProps) {
             </p>
             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
               {displayOptionalDate(driver.profile.dateOfBirth)}
-            </p>
-          </div>
-          <div>
-            <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-              Chauffeur role
-            </p>
-            <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              {CHAUFFEUR_CATEGORY_LABELS[
-                driverProfile.chauffeurCategory as ChauffeurCategory
-              ] ?? driverProfile.chauffeurCategory}
-            </p>
-          </div>
-          <div className="lg:col-span-2 2xl:col-span-3">
-            <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-              Bio for clients
-            </p>
-            <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              {displayValue(driverProfile.bioStatement)}
             </p>
           </div>
         </div>
