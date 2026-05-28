@@ -94,3 +94,10 @@ export function isDriverNavActive(
 ): boolean {
   return driverSectionFromPathname(pathname, userId) === segment;
 }
+
+export function driverPathForSection(userId: string, segment: string): string {
+  if (!segment) {
+    return `/drivers/${userId}`;
+  }
+  return `/drivers/${userId}/${segment}`;
+}

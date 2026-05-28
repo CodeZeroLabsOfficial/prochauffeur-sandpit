@@ -31,6 +31,7 @@ import {
   type ChauffeurCategory,
 } from "@/lib/prochauffeur/types";
 import { vehicleDisplayName } from "@/lib/prochauffeur/vehicleHelpers";
+import Link from "next/link";
 import React, { useMemo } from "react";
 
 const DRIVER_TABS = [
@@ -114,7 +115,14 @@ export default function DriversRosterView() {
         header: "Driver",
         sortable: true,
         render: (driver) => (
-          <PrimaryCell>{displayNameForUser(driver, driver.id)}</PrimaryCell>
+          <PrimaryCell>
+            <Link
+              href={`/drivers/${driver.id}`}
+              className="text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-300"
+            >
+              {displayNameForUser(driver, driver.id)}
+            </Link>
+          </PrimaryCell>
         ),
       },
       {
