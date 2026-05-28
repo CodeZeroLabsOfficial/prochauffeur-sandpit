@@ -1,29 +1,47 @@
 "use client";
 
 import CompanySettingsSection from "@/components/company-profile/CompanySettingsSection";
+import Button from "@/components/ui/button/Button";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
 import { useAdminOperations } from "@/context/AdminOperationsContext";
 import { capLabel } from "@/lib/prochauffeur/display";
 import React from "react";
 
-function MetricCard({
+function usagePercent(current: number, cap: number): number {
+  if (!Number.isFinite(cap) || cap <= 0 || cap >= Number.MAX_SAFE_INTEGER / 2) {
+    return 0;
+  }
+
+  return Math.min(100, Math.max(0, Math.round((current / cap) * 100)));
+}
+
+function UsageRow({
   title,
   current,
-  capLabelText,
+  cap,
 }: {
   title: string;
   current: number;
-  capLabelText: string;
+  cap: number;
 }) {
+  const capped = cap < Number.MAX_SAFE_INTEGER / 2;
+  const label = capped ? `${current} / ${cap}` : `${current} / Unlimited`;
+  const percent = usagePercent(current, cap);
+
   return (
-    <div className="rounded-2xl border border-gray-200 p-5 dark:border-gray-800 lg:p-6">
-      <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
-      <p className="mt-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-        {current}
-        <span className="ml-2 text-base font-normal text-gray-500 dark:text-gray-400">
-          / {capLabelText}
-        </span>
-      </p>
+    <div className="space-y-2">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{title}</p>
+        <p className="text-sm font-semibold text-gray-800 dark:text-white/90">{label}</p>
+      </div>
+      {capped ? (
+        <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-800">
+          <div
+            className="h-full rounded-full bg-brand-500"
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -47,31 +65,46 @@ export default function LicenseManagementView() {
       title="License"
       description="Subscription tier and resource limits for your fleet."
     >
-      <div className="mb-6 rounded-2xl border border-brand-500/20 bg-brand-500/5 p-5 lg:p-6">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Subscription tier
-        </p>
-        <p className="mt-1 text-2xl font-semibold text-gray-800 dark:text-white/90">
-          {tier}
-        </p>
-      </div>
+      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
+        Current plan
+      </p>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <MetricCard
-          title="Admin accounts"
-          current={admins}
-          capLabelText={capLabel(limits.maxAdmins)}
-        />
-        <MetricCard
-          title="Drivers"
-          current={drivers}
-          capLabelText={capLabel(limits.maxDrivers)}
-        />
-        <MetricCard
-          title="Dispatch locations"
-          current={locations.length}
-          capLabelText={capLabel(limits.maxLocations)}
-        />
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-50/40 dark:border-gray-800 dark:bg-gray-900/30">
+        <div className="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between lg:px-6">
+          <div>
+            <p className="text-base font-semibold text-gray-800 dark:text-white/90">
+              You&apos;re on {tier} plan
+            </p>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              License usage and account capacity for your current subscription.
+            </p>
+          </div>
+          <Button variant="outline" disabled>
+            Manage plan
+          </Button>
+        </div>
+
+        <div className="border-t border-gray-200 px-4 py-4 dark:border-gray-800 sm:px-5 lg:px-6">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900/60 sm:p-5">
+            <p className="text-sm font-semibold text-gray-800 dark:text-white/90">
+              License limits
+            </p>
+            <div className="mt-3 space-y-4">
+              <UsageRow title="Admin accounts" current={admins} cap={limits.maxAdmins} />
+              <UsageRow title="Drivers" current={drivers} cap={limits.maxDrivers} />
+              <UsageRow
+                title="Dispatch locations"
+                current={locations.length}
+                cap={limits.maxLocations}
+              />
+            </div>
+            <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+              Caps: admins {capLabel(limits.maxAdmins)}, drivers{" "}
+              {capLabel(limits.maxDrivers)}, locations{" "}
+              {capLabel(limits.maxLocations)}.
+            </p>
+          </div>
+        </div>
       </div>
     </CompanySettingsSection>
   );
