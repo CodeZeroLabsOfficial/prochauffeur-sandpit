@@ -114,7 +114,7 @@ export default function LocaleSettingsView() {
       }
       className="max-w-3xl"
     >
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-50/40 dark:border-gray-800 dark:bg-gray-900/30">
+      <div className="overflow-hidden">
         <div className="px-4 pb-3 pt-4 sm:px-5">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
             Preference
