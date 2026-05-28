@@ -138,12 +138,12 @@ export default function BrandingSettingsView() {
         ))}
       </div>
 
-      <div className="mt-6 flex gap-3 border-t border-gray-200 pt-6 dark:border-gray-800">
-        <Button disabled={isSaving} onClick={() => void handleSave()}>
-          {isSaving ? "Saving…" : "Save branding"}
-        </Button>
+      <div className="mt-6 flex justify-end gap-3 border-t border-gray-200 pt-6 dark:border-gray-800">
         <Button variant="outline" disabled={isSaving} onClick={handleCancel}>
           Cancel
+        </Button>
+        <Button disabled={isSaving} onClick={() => void handleSave()}>
+          {isSaving ? "Saving…" : "Save branding"}
         </Button>
       </div>
     </CompanySettingsSection>

@@ -4,7 +4,6 @@ import CompanySettingsSection from "@/components/company-profile/CompanySettings
 import Button from "@/components/ui/button/Button";
 import { useAdminDashboard } from "@/context/AdminDashboardContext";
 import { useAdminOperations } from "@/context/AdminOperationsContext";
-import { capLabel } from "@/lib/prochauffeur/display";
 import React from "react";
 
 function usagePercent(current: number, cap: number): number {
@@ -93,11 +92,6 @@ export default function LicenseManagementView() {
                 cap={limits.maxLocations}
               />
             </div>
-            <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
-              Caps: admins {capLabel(limits.maxAdmins)}, drivers{" "}
-              {capLabel(limits.maxDrivers)}, locations{" "}
-              {capLabel(limits.maxLocations)}.
-            </p>
           </div>
         </div>
       </div>
