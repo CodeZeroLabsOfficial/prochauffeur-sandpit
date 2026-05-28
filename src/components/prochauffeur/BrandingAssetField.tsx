@@ -1,5 +1,6 @@
 "use client";
 
+import Button from "@/components/ui/button/Button";
 import {
   isLegacyStaticBrandingPath,
   type BrandingAssetPreview,
@@ -37,7 +38,6 @@ type BrandingAssetFieldProps = {
   usage: string;
   value: string;
   preview: BrandingAssetPreview;
-  showLabel?: boolean;
   onChange: (value: string) => void;
   onUploadError?: (message: string) => void;
 };
@@ -54,7 +54,6 @@ export default function BrandingAssetField({
   usage,
   value,
   preview,
-  showLabel = true,
   onChange,
   onUploadError,
 }: BrandingAssetFieldProps) {
@@ -84,7 +83,7 @@ export default function BrandingAssetField({
     [maxFileLabelKb, onChange, onUploadError]
   );
 
-  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
+  const { getInputProps, open } = useDropzone({
     onDrop: (files) => void onDrop(files),
     accept: ACCEPTED_IMAGE_TYPES,
     multiple: false,
@@ -92,75 +91,44 @@ export default function BrandingAssetField({
     noKeyboard: true,
   });
 
-  const previewBoxClass =
-    preview === "compact"
-      ? "h-16 w-16"
-      : "h-16 min-w-[140px] max-w-[220px] px-4";
-
-  const dropzone = (
-    <div
-      {...getRootProps()}
-      className={`flex min-h-16 flex-1 items-center rounded-xl border border-dashed p-5 transition ${
-        isDragActive
-          ? "border-brand-500 bg-brand-50/50 dark:bg-brand-500/10"
-          : "border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
-      }`}
-    >
-      <input {...getInputProps()} id={id} />
-      <p className="text-sm text-gray-600 dark:text-gray-300">
-        Drag and drop a PNG, JPG, WebP, or SVG file here, or{" "}
-        <button
-          type="button"
-          onClick={open}
-          className="font-medium text-brand-500 underline hover:text-brand-600 dark:hover:text-brand-400"
-        >
-          browse
-        </button>
-        .
-      </p>
-    </div>
-  );
-
-  const previewBox = (
-    <div
-      className={`flex shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900 ${previewBoxClass}`}
-    >
-      {value.trim() && !isLegacyStaticBrandingPath(value) ? (
-        <Image
-          src={value}
-          alt={label}
-          width={preview === "compact" ? 64 : 200}
-          height={64}
-          className={
-            preview === "compact"
-              ? "h-full w-full object-contain p-2"
-              : "max-h-14 w-auto object-contain"
-          }
-          unoptimized={shouldUnoptimizePreview(value)}
-        />
-      ) : (
-        <span className="text-xs text-gray-400 dark:text-gray-500">No image</span>
-      )}
-    </div>
-  );
-
-  if (!showLabel) {
-    return (
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
-        {previewBox}
-        {dropzone}
-      </div>
-    );
-  }
+  const hasPreview = value.trim() && !isLegacyStaticBrandingPath(value);
+  const previewSizeClass =
+    preview === "compact" ? "h-10 w-10" : "h-10 min-w-[72px] max-w-[120px] px-2";
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-      {previewBox}
+    <div className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+      <div className="flex min-w-0 items-center gap-3">
+        <div
+          className={`flex shrink-0 items-center justify-center overflow-hidden rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900 ${previewSizeClass}`}
+        >
+          {hasPreview ? (
+            <Image
+              src={value}
+              alt={label}
+              width={preview === "compact" ? 40 : 120}
+              height={40}
+              className={
+                preview === "compact"
+                  ? "h-full w-full object-contain p-1"
+                  : "max-h-8 w-auto object-contain"
+              }
+              unoptimized={shouldUnoptimizePreview(value)}
+            />
+          ) : (
+            <span className="text-[10px] text-gray-400 dark:text-gray-500">—</span>
+          )}
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-gray-800 dark:text-white/90">{label}</p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{usage}</p>
+        </div>
+      </div>
 
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium text-gray-800 dark:text-white/90">{label}</p>
-        <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{usage}</p>
-        <div className="mt-3">{dropzone}</div>
+      <div className="shrink-0">
+        <input {...getInputProps()} id={id} />
+        <Button type="button" size="sm" variant="outline" onClick={open}>
+          Upload
+        </Button>
       </div>
     </div>
   );
