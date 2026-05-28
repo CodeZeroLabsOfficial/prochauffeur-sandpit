@@ -126,7 +126,7 @@ export default function AdminListTableCard({
       {/* Filter segments, search, and filter button — single row */}
       <div className="flex flex-col gap-3 border-b border-gray-100 px-5 py-4 dark:border-white/[0.05] lg:flex-row lg:items-center lg:gap-4 sm:px-6">
         {showTabs ? (
-          <div className="inline-flex shrink-0 flex-wrap gap-1 rounded-xl border border-gray-200 bg-gray-50 p-1 dark:border-gray-800 dark:bg-white/[0.03]">
+          <div className="inline-flex shrink-0 flex-wrap gap-0.5 rounded-lg bg-gray-100 p-0.5 dark:bg-gray-900">
             {tabs.map((tab) => {
               const active = tab.id === activeTabId;
               const count = tabCounts?.[tab.id];
@@ -135,10 +135,10 @@ export default function AdminListTableCard({
                   key={tab.id}
                   type="button"
                   onClick={() => onTabChange(tab.id)}
-                  className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition ${
+                  className={`rounded-md px-3.5 py-1.5 text-sm font-medium transition ${
                     active
-                      ? "bg-white text-gray-800 shadow-theme-xs dark:bg-gray-800 dark:text-white/90"
-                      : "text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white/80"
+                      ? "bg-white text-gray-900 shadow-theme-xs dark:bg-gray-800 dark:text-white"
+                      : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                   }`}
                 >
                   {tab.label}
